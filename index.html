@@ -51,11 +51,13 @@
                     .attr("transform", 
                           "translate(" + margin.left + "," + margin.top + ")");
 
+            // Label of X axis
             svg.append("text")
                .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.bottom) + ")")
                .style("text-anchor", "middle")
                .text("Time");
 
+            // Label of Y axis
             svg.append("text")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 0 - margin.left)
@@ -123,9 +125,11 @@
 	    	         .attr("height", 8)
 		         .attr("fill", "DarkCyan")
 		         .attr("opacity", 0.7)
-		         .on("mouseover", function() {d3.select(this).attr("fill", "Purple");})
-		         .on("mouseout", function() {d3.select(this).attr("fill", "DarkCyan");});
-
+		         .attr("id", function(d, i){var noteid = 'p'+i; return noteid; })    // Note ID for alignment visualization
+		         .on("mouseover", function(d, i) {d3.select("#p"+i).attr("fill", "Purple");
+							  d3.select("#a"+i).attr("fill", "Purple");})
+		         .on("mouseout", function(d, i) {d3.select("#p"+i).attr("fill", "DarkCyan");
+							 d3.select("#a"+i).attr("fill", "DarkCyan");});
             });
 
         </script>
