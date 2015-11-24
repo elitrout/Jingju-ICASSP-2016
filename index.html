@@ -16,7 +16,11 @@
             stroke-width: 1;
             shape-rendering: crispEdges;
         }
+
     </style>
+
+    <div id="area1" style="width:80%; margin:0 auto;"></div>
+    <div id="area2" style="width:80%; margin:0 auto;"></div>
 
     <head>
         <meta charset="utf-8">
@@ -27,9 +31,9 @@
     <body>
         <script type="text/javascript">
             // Set the dimensions of the canvas / graph
-            var margin = {top: 30, right: 20, bottom: 30, left: 50},
-                width = 600 - margin.left - margin.right,
-                height = 270 - margin.top - margin.bottom;
+            var margin = {top: 30, right: 20, bottom: 40, left: 50},
+                width = 800 - margin.left - margin.right,
+                height = 300 - margin.top - margin.bottom;
 
             // Set the ranges
             var x = d3.scale.linear().range([0, width]);
@@ -41,9 +45,11 @@
             
             var yAxis = d3.svg.axis().scale(y)
                 .orient("left").ticks(10);
+
+        // Pro plot
             
             // Adds the svg canvas
-            var svg = d3.select("body")
+            var svg1 = d3.select("#area1")
                 .append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
@@ -52,13 +58,13 @@
                           "translate(" + margin.left + "," + margin.top + ")");
 
             // Label of X axis
-            svg.append("text")
+            svg1.append("text")
                .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.bottom) + ")")
                .style("text-anchor", "middle")
                .text("Time");
 
             // Label of Y axis
-            svg.append("text")
+            svg1.append("text")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 0 - margin.left)
                 .attr("x",0 - (height / 2))
@@ -67,7 +73,7 @@
                 .text("Pitch (MIDI)");
 
             // Define the line
-            var pitchtrack = d3.svg.line()
+            var pitchtrack1 = d3.svg.line()
                 .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
                 .x(function(d) { return x(d.time); })
                 .y(function(d) { return y(d.pitch); });
@@ -84,18 +90,106 @@
                 y.domain([d3.min(data, function(d) { return d.pitch; }), d3.max(data, function(d) { return d.pitch; })]).nice();
 
                 // Add the pitchtrack path.
-                svg.append("path")
+                svg1.append("path")
                     .attr("class", "line")
-                    .attr("d", pitchtrack(data));
+                    .attr("d", pitchtrack1(data));
             
                 // Add the X Axis
-                svg.append("g")
+                svg1.append("g")
                     .attr("class", "x axis")
                     .attr("transform", "translate(0," + height + ")")
                     .call(xAxis);
             
                 // Add the Y Axis
-                svg.append("g")
+                svg1.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis);
+            
+            });
+
+            // Plot MIDI notes
+            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+                data.forEach(function(d) {
+                    d.startTime = +d.startTime;
+                    d.pitch = +d.pitch;
+	    	    d.duration = +d.duration;
+                });
+		
+	    	var MIDInotes = svg1.selectAll("rect")
+                                   .data(data)
+                                   .enter()
+                                   .append("rect");
+
+	    	MIDInotes.attr("x", function(d) {return x(d.startTime);})
+	    	         .attr("y", function(d) {return y(d.pitch) - 4;})
+	    	         .attr("width", function(d) {return x(d.duration);})
+	    	         .attr("height", 8)
+		         .attr("fill", "DarkCyan")
+		         .attr("opacity", 0.7)
+		         .attr("id", function(d, i){var noteid = 'p'+i; return noteid; })    // Note ID for alignment visualization
+		         .on("mouseover", function(d, i) {d3.select("#p"+i).attr("fill", "Purple");
+							  d3.select("#s"+i).attr("fill", "Purple");})
+		         .on("mouseout", function(d, i) {d3.select("#p"+i).attr("fill", "DarkCyan");
+							 d3.select("#s"+i).attr("fill", "DarkCyan");});
+            });
+
+
+        // Student plot
+            
+            // Adds the svg canvas
+            var svg2 = d3.select("#area2")
+                .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                    .attr("transform", 
+                          "translate(" + margin.left + "," + margin.top + ")");
+
+            // Label of X axis
+            svg2.append("text")
+               .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.bottom) + ")")
+               .style("text-anchor", "middle")
+               .text("Time");
+
+            // Label of Y axis
+            svg2.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x",0 - (height / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text("Pitch (MIDI)");
+
+            // Define the line
+            var pitchtrack2 = d3.svg.line()
+                .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
+                .x(function(d) { return x(d.time); })
+                .y(function(d) { return y(d.pitch); });
+
+            // Plot pitch track
+            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_regression_pitchtrack.txt", function(error, data) {
+                data.forEach(function(d) {
+                    d.time = +d.time;
+                    d.pitch = +d.pitch;
+                });
+            
+                // Scale the range of the data
+                x.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
+                y.domain([d3.min(data, function(d) { return d.pitch; }), d3.max(data, function(d) { return d.pitch; })]).nice();
+
+                // Add the pitchtrack path.
+                svg2.append("path")
+                    .attr("class", "line")
+                    .attr("d", pitchtrack2(data));
+            
+                // Add the X Axis
+                svg2.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+            
+                // Add the Y Axis
+                svg2.append("g")
                     .attr("class", "y axis")
                     .call(yAxis);
             
@@ -109,12 +203,7 @@
 	    	    d.duration = +d.duration;
                 });
 
-                // var note = svg.selectAll("g")
-                //               .data(data)
-                //               .enter().append("g")
-                //               .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
-		
-	    	var MIDInotes = svg.selectAll("rect")
+	    	var MIDInotes = svg2.selectAll("rect")
                                    .data(data)
                                    .enter()
                                    .append("rect");
@@ -125,11 +214,11 @@
 	    	         .attr("height", 8)
 		         .attr("fill", "DarkCyan")
 		         .attr("opacity", 0.7)
-		         .attr("id", function(d, i){var noteid = 'p'+i; return noteid; })    // Note ID for alignment visualization
-		         .on("mouseover", function(d, i) {d3.select("#p"+i).attr("fill", "Purple");
-							  d3.select("#a"+i).attr("fill", "Purple");})
-		         .on("mouseout", function(d, i) {d3.select("#p"+i).attr("fill", "DarkCyan");
-							 d3.select("#a"+i).attr("fill", "DarkCyan");});
+		         .attr("id", function(d, i){var noteid = 's'+i; return noteid; })    // Note ID for alignment visualization
+		         .on("mouseover", function(d, i) {d3.select("#s"+i).attr("fill", "Purple");
+							  d3.select("#p"+i).attr("fill", "Purple");})
+		         .on("mouseout", function(d, i) {d3.select("#s"+i).attr("fill", "DarkCyan");
+							 d3.select("#p"+i).attr("fill", "DarkCyan");});
             });
 
         </script>
