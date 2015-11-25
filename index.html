@@ -19,8 +19,14 @@
     </style>
 
     <div id="area1" style="position:relative; top:0px; left:0px; margin:0 auto;"></div>
+    <div id="control1" style="position:relative; top:35px; left:0px; margin:0 auto;">
+        <button id="playButton_t" onclick="playButton_t_onclick()" style="text-align: middle;">Play</button>
+    </div>
     <div id="wave1" style="position:relative; margin:0 left; top:10px; height:30px; border:3px solid #73AD21;"></div>
     <div id="area2" style="position:relative; top:20px; left:0px; margin:0 auto;"></div>
+    <div id="control2" style="position:relative; top:55px; left:0px; margin:0 auto;">
+        <button id="playButton_s" onclick="playButton_s_onclick()">Play</button>
+    </div>
     <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:3px solid #73AD21;"></div>
     <head>
         <meta charset="utf-8">
@@ -282,6 +288,9 @@
             // Add audio player
             wave1.style.width = width + "px";
             wave1.style.left = margin.left + "px";
+            playButton_t.style.width = "45px";
+            // play_t.style.float = "left";
+            // play_t.style.margin-left = "5px";
 
             var wavesurfer_t = WaveSurfer.create({
                 container: '#wave1',
@@ -293,10 +302,19 @@
             });
             
             wavesurfer_t.on('ready', function () {
-                // wavesurfer.play();
+                // wavesurfer_t.play();
             });
             
             wavesurfer_t.load('data/weiguojia_section_pro.wav');
+
+            function playButton_t_onclick () {
+		wavesurfer_t.playPause();
+		if (wavesurfer_t.isPlaying()) {
+		    document.getElementById("playButton_t").innerHTML = "Pause";
+		} else {
+		    document.getElementById("playButton_t").innerHTML = "Play";
+		}
+	    }
 
 
         // Student plot
@@ -526,7 +544,7 @@
                 // wavesurfer.play();
             });
             
-            wavesurfer_s.load('data/weiguojia_section_pro.wav');
+            wavesurfer_s.load('data/weiguojia_section_amateur.wav');
 
         </script>
     </body>
