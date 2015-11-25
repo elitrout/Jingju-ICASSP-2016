@@ -43,14 +43,19 @@
                 height = 300 - margin.top - margin.bottom;
 
             // Set the ranges
-            var x = d3.scale.linear().range([0, width]);
-            var y = d3.scale.linear().range([height, 0]);
+            var x_t = d3.scale.linear().range([0, width]);
+            var y_t = d3.scale.linear().range([height, 0]);
+            var x_s = d3.scale.linear().range([0, width]);
+            var y_s = d3.scale.linear().range([height, 0]);
             
             // Define the axes
-            var xAxis = d3.svg.axis().scale(x)
+            var xAxis_t = d3.svg.axis().scale(x_t)
                 .orient("bottom").ticks(10);
-            
-            var yAxis = d3.svg.axis().scale(y)
+            var yAxis_t = d3.svg.axis().scale(y_t)
+                .orient("left").ticks(10);
+            var xAxis_s = d3.svg.axis().scale(x_s)
+                .orient("bottom").ticks(10);
+            var yAxis_s = d3.svg.axis().scale(y_s)
                 .orient("left").ticks(10);
 
         // Teacher plot
@@ -91,8 +96,8 @@
             var pitchtrack1 = d3.svg.line()
                 // .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
                 .defined(function(d) { return d.pitch>0 ? true:false; })    // Don't plot silence (negative pitch)
-                .x(function(d) { return x(d.time); })
-                .y(function(d) { return y(d.pitch); });
+                .x(function(d) { return x_t(d.time); })
+                .y(function(d) { return y_t(d.pitch); });
 
             // Plot pitch track
             d3.tsv("data/weiguojia_section_pro_regression_pitchtrack.txt", function(error, data) {
@@ -102,8 +107,8 @@
                 });
             
                 // Scale the range of the data
-                x.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
-                y.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
+                x_t.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
+                y_t.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
 
                 // Add the pitchtrack path.
                 svg1.append("path")
@@ -114,12 +119,12 @@
                 svg1.append("g")
                     .attr("class", "x axis")
                     .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
+                    .call(xAxis_t);
             
                 // Add the Y Axis
                 svg1.append("g")
                     .attr("class", "y axis")
-                    .call(yAxis);
+                    .call(yAxis_t);
             
             });
 
@@ -162,9 +167,9 @@
                                    .append("rect");
 
 		var MIDInoteOffset = 4;    // The vertical center of the note rect is aligned to the pitch
-	    	MIDInotes.attr("x", function(d) {return x(d.startTime);})
-	    	         .attr("y", function(d) {return y(d.pitch) - MIDInoteOffset;})
-	    	         .attr("width", function(d) {return x(d.duration);})
+	    	MIDInotes.attr("x", function(d) {return x_t(d.startTime);})
+	    	         .attr("y", function(d) {return y_t(d.pitch) - MIDInoteOffset;})
+	    	         .attr("width", function(d) {return x_t(d.duration);})
 	    	         .attr("height", 8)
 		         .attr("fill", "DarkCyan")
 		         .attr("opacity", 0.7)
@@ -181,7 +186,7 @@
 					      var noteEndTime_t = noteStartTime_t + noteDurationTime_t;
 
 			                      svg1.append("line")
-				                  // .attr("x1", x(d.startTime))
+				                  .attr("id", "noteBoundaryL")
 				                  .attr("x1", noteStart_t)
 				                  .attr("y1", height)
 				                  .attr("x2", noteStart_t)
@@ -189,6 +194,7 @@
 				                  .style("stroke", "grey")
 				                  .style("stroke-dasharray", "3");
 			                      svg1.append("line")
+				                  .attr("id", "noteBoundaryR")
 				                  .attr("x1", noteEnd_t) 
 				                  .attr("y1", height)
 				                  .attr("x2", noteEnd_t)
@@ -230,6 +236,7 @@
 						  var noteEnd_s = noteStart_s + noteDuration_s;
 						  var noteEndTime_s = noteStartTime_s + noteDurationTime_s;
 						  svg2.append("line")
+				                      .attr("id", "noteBoundaryL")
 				                      .attr("x1", noteStart_s)
 				                      .attr("y1", height)
 				                      .attr("x2", noteStart_s)
@@ -237,6 +244,7 @@
 				                      .style("stroke", "grey")
 				                      .style("stroke-dasharray", "3");
 						  svg2.append("line")
+				                      .attr("id", "noteBoundaryR")
 				                      .attr("x1", noteEnd_s) 
 				                      .attr("y1", height)
 				                      .attr("x2", noteEnd_s)
@@ -268,7 +276,8 @@
 			                     // d3.select("#t"+i).attr("fill", "DarkCyan");
 			                     d3.selectAll("rect").attr("fill", "DarkCyan");
 			                     // svg1.selectAll('line').remove();
-			                     d3.selectAll('line').remove();
+			                     svg1.select('#noteBoundaryL').remove();
+			                     svg1.select('#noteBoundaryR').remove();
 			                     svg1.select("#info_note").remove();
 			                     svg1.select("#info_freq").remove();
 			                     svg1.select("#info_time").remove();
@@ -278,6 +287,8 @@
 
 			                     if (!isNaN(pair_s)) {
 						 // d3.select("#s"+i).attr("fill", "DarkCyan");
+						 svg2.select('#noteBoundaryL').remove();
+						 svg2.select('#noteBoundaryR').remove();
 						 svg2.select("#info_note").remove();
 						 svg2.select("#info_freq").remove();
 						 svg2.select("#info_time").remove();
@@ -300,9 +311,33 @@
 		height: 30
 		// minPxPerSec: 10
             });
-            
-            wavesurfer_t.on('ready', function () {
-                // wavesurfer_t.play();
+
+            // Plot moving playback cursor on pitchtrack
+            svg1.append("line")
+		.attr("id", "playbackPointer_t")
+                .attr("x1", x_t(0))
+                .attr("y1", height)
+		.attr("x2", x_t(0))
+		.attr("y2", 0)
+		.style("stroke", "black");
+
+            wavesurfer_t.on('audioprocess', function () {
+                currentTime = wavesurfer_t.getCurrentTime();
+		d3.select("#playbackPointer_t")
+		    .attr("x1", x_t(currentTime))
+		    .attr("y1", height)
+		    .attr("x2", x_t(currentTime))
+		    .attr("y2", 0)
+		    .style("stroke", "black");
+            });
+
+            wavesurfer_t.on('finish', function () {
+		d3.select("#playbackPointer_t")
+		    .attr("x1", x_t(0))
+		    .attr("y1", height)
+		    .attr("x2", x_t(0))
+		    .attr("y2", 0)
+		    .style("stroke", "black");
             });
             
             wavesurfer_t.load('data/weiguojia_section_pro.wav');
@@ -355,8 +390,8 @@
             var pitchtrack2 = d3.svg.line()
                 // .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
                 .defined(function(d) { return d.pitch>0 ? true:false; })    // Don't plot silence (negative pitch)
-                .x(function(d) { return x(d.time); })
-                .y(function(d) { return y(d.pitch); });
+                .x(function(d) { return x_s(d.time); })
+                .y(function(d) { return y_s(d.pitch); });
 
             // Plot pitch track
             d3.tsv("data/weiguojia_section_amateur_regression_pitchtrack.txt", function(error, data) {
@@ -366,8 +401,8 @@
                 });
             
                 // Scale the range of the data
-                x.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
-		y.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
+                x_s.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
+		y_s.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
 
                 // Add the pitchtrack path.
                 svg2.append("path")
@@ -379,12 +414,12 @@
                 svg2.append("g")
                     .attr("class", "x axis")
                     .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
+                    .call(xAxis_s);
             
                 // Add the Y Axis
                 svg2.append("g")
                     .attr("class", "y axis")
-                    .call(yAxis);
+                    .call(yAxis_s);
             
             });
 
@@ -405,11 +440,11 @@
                                    .enter()
                                    .append("rect");
 
-	    	MIDInotes.attr("x", function(d) {return x(d.startTime);})
-	    	         .attr("y", function(d) {return y(d.pitch) - 4;})
-	    	         .attr("width", function(d) {return x(d.duration);})
-	    	         .attr("height", 8)
-		         .attr("fill", "DarkCyan")
+	    	MIDInotes.attr("x", function(d) {return x_s(d.startTime);})
+	    	         .attr("y", function(d) {return y_s(d.pitch) - 4;})
+    	                 .attr("width", function(d) {return x_s(d.duration);})
+   	                 .attr("height", 8)
+        	         .attr("fill", "DarkCyan")
 		         .attr("opacity", 0.7)
 		         .attr("id", function(d, i){var noteid = 's'+i; return noteid; })    // Note ID for alignment visualization
 		         .on("mouseover", function(d, i) {
@@ -425,6 +460,7 @@
 
 			                      svg2.append("line")
 				                  // .attr("x1", x(d.startTime))
+				                  .attr("id", "noteBoundaryL")
 				                  .attr("x1", noteStart_s)
 				                  .attr("y1", height)
 				                  .attr("x2", noteStart_s)
@@ -432,6 +468,7 @@
 				                  .style("stroke", "grey")
 				                  .style("stroke-dasharray", "3");
 			                      svg2.append("line")
+				                  .attr("id", "noteBoundaryR")
 				                  .attr("x1", noteEnd_s) 
 				                  .attr("y1", height)
 				                  .attr("x2", noteEnd_s)
@@ -473,6 +510,7 @@
 						  var noteEnd_t = noteStart_t + noteDuration_t;
 						  var noteEndTime_t = noteStartTime_t + noteDurationTime_t;
 						  svg1.append("line")
+				                      .attr("id", "noteBoundaryL")
 				                      .attr("x1", noteStart_t)
 				                      .attr("y1", height)
 				                      .attr("x2", noteStart_t)
@@ -480,6 +518,7 @@
 				                      .style("stroke", "grey")
 				                      .style("stroke-dasharray", "3");
 						  svg1.append("line")
+				                      .attr("id", "noteBoundaryR")
 				                      .attr("x1", noteEnd_t) 
 				                      .attr("y1", height)
 				                      .attr("x2", noteEnd_t)
@@ -511,7 +550,8 @@
 			                     // d3.select("#t"+i).attr("fill", "DarkCyan");
 			                     d3.selectAll("rect").attr("fill", "DarkCyan");
 			                     // svg1.selectAll('line').remove();
-			                     d3.selectAll('line').remove();
+			                     svg1.select('#noteBoundaryL').remove();
+			                     svg1.select('#noteBoundaryR').remove();
 			                     svg1.select("#info_note").remove();
 			                     svg1.select("#info_freq").remove();
 			                     svg1.select("#info_time").remove();
@@ -520,6 +560,8 @@
 			                     var pair_t = dictS2T_note[i].teacher;
 
 			                     if (!isNaN(pair_t)) {
+						 svg2.select('#noteBoundaryL').remove();
+						 svg2.select('#noteBoundaryR').remove();
 						 svg2.select("#info_note").remove();
 						 svg2.select("#info_freq").remove();
 						 svg2.select("#info_time").remove();
@@ -530,6 +572,7 @@
             // Add audio player
             wave2.style.width = width + "px";
             wave2.style.left = margin.left + "px";
+            playButton_s.style.width = "45px";
 
             var wavesurfer_s = WaveSurfer.create({
                 container: '#wave2',
@@ -539,12 +582,45 @@
 		height: 30
 		// minPxPerSec: 10
             });
-            
-            wavesurfer_s.on('ready', function () {
-                // wavesurfer.play();
+
+            // Plot moving playback cursor on pitchtrack
+            svg2.append("line")
+		.attr("id", "playbackPointer_s")
+                .attr("x1", x_t(0))
+                .attr("y1", height)
+		.attr("x2", x_t(0))
+		.attr("y2", 0)
+		.style("stroke", "black");
+
+            wavesurfer_s.on('audioprocess', function () {
+                currentTime = wavesurfer_s.getCurrentTime();
+		d3.select("#playbackPointer_s")
+		    .attr("x1", x_s(currentTime))
+		    .attr("y1", height)
+		    .attr("x2", x_s(currentTime))
+		    .attr("y2", 0)
+		    .style("stroke", "black");
+            });
+
+            wavesurfer_s.on('finish', function () {
+		d3.select("#playbackPointer_s")
+		    .attr("x1", x_s(0))
+		    .attr("y1", height)
+		    .attr("x2", x_s(0))
+		    .attr("y2", 0)
+		    .style("stroke", "black");
             });
             
             wavesurfer_s.load('data/weiguojia_section_amateur.wav');
+
+            function playButton_s_onclick () {
+		wavesurfer_s.playPause();
+		if (wavesurfer_s.isPlaying()) {
+		    document.getElementById("playButton_s").innerHTML = "Pause";
+		} else {
+		    document.getElementById("playButton_s").innerHTML = "Play";
+		}
+	    }
 
         </script>
     </body>
