@@ -16,22 +16,23 @@
             stroke-width: 1;
             shape-rendering: crispEdges;
         }
-
     </style>
 
-    <div id="area1" style="width:80%; margin:0 auto;"></div>
-    <div id="area2" style="width:80%; margin:0 auto;"></div>
-
+    <div id="area1" style="position:relative; top:0px; left:0px; margin:0 auto;"></div>
+    <div id="wave1" style="position:relative; margin:0 left; top:10px; height:30px; border:3px solid #73AD21;"></div>
+    <div id="area2" style="position:relative; top:20px; left:0px; margin:0 auto;"></div>
+    <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:3px solid #73AD21;"></div>
     <head>
         <meta charset="utf-8">
         <title>D3 Test</title>
         <script type="text/javascript" src="d3/d3.js"></script>
+        <script type="text/javascript" src="wavesurfer.min.js"></script>
     </head>
 
     <body>
         <script type="text/javascript">
             // Set the dimensions of the canvas / graph
-            var margin = {top: 30, right: 20, bottom: 40, left: 50},
+            var margin = {top: 50, right: 20, bottom: 40, left: 50},
                 width = 800 - margin.left - margin.right,
                 height = 300 - margin.top - margin.bottom;
 
@@ -72,14 +73,23 @@
                 .style("text-anchor", "middle")
                 .text("Pitch (MIDI)");
 
+            // Plot title
+            svg1.append("text")
+               .attr("transform", "translate(" + (width / 2) + " ," + (0 - 10) + ")")
+               .style("text-anchor", "middle")
+               .style("font-size","20px")
+               .style("font-weight","bold")
+               .text("Teacher");
+
             // Define the line
             var pitchtrack1 = d3.svg.line()
-                .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
+                // .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
+                .defined(function(d) { return d.pitch>0 ? true:false; })    // Don't plot silence (negative pitch)
                 .x(function(d) { return x(d.time); })
                 .y(function(d) { return y(d.pitch); });
 
             // Plot pitch track
-            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_regression_pitchtrack.txt", function(error, data) {
+            d3.tsv("data/weiguojia_section_pro_regression_pitchtrack.txt", function(error, data) {
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
@@ -87,7 +97,7 @@
             
                 // Scale the range of the data
                 x.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
-                y.domain([d3.min(data, function(d) { return d.pitch; }), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
+                y.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
 
                 // Add the pitchtrack path.
                 svg1.append("path")
@@ -233,6 +243,25 @@
 			                 });
             });
 
+            // Add audio player
+            wave1.style.width = width + "px";
+            wave1.style.left = margin.left + "px";
+
+            var wavesurfer_t = WaveSurfer.create({
+                container: '#wave1',
+                waveColor: 'violet',
+                progressColor: 'purple',
+		fillParent: true,
+		height: 30
+		// minPxPerSec: 10
+            });
+            
+            wavesurfer_t.on('ready', function () {
+                // wavesurfer.play();
+            });
+            
+            wavesurfer_t.load('data/weiguojia_section_pro.wav');
+
 
         // Student plot
             
@@ -245,13 +274,13 @@
                     .attr("transform", 
                           "translate(" + margin.left + "," + margin.top + ")");
 
-            // Label of X axis
+            // Plot X axis label
             svg2.append("text")
                .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.bottom) + ")")
                .style("text-anchor", "middle")
                .text("Time");
 
-            // Label of Y axis
+            // Plot Y axis label
             svg2.append("text")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 0 - margin.left)
@@ -260,14 +289,23 @@
                 .style("text-anchor", "middle")
                 .text("Pitch (MIDI)");
 
+            // Plot title
+            svg2.append("text")
+               .attr("transform", "translate(" + (width / 2) + " ," + (0 - 10) + ")")
+               .style("text-anchor", "middle")
+               .style("font-size","20px")
+               .style("font-weight","bold")
+               .text("Student");
+
             // Define the line
             var pitchtrack2 = d3.svg.line()
-                .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
+                // .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
+                .defined(function(d) { return d.pitch>0 ? true:false; })    // Don't plot silence (negative pitch)
                 .x(function(d) { return x(d.time); })
                 .y(function(d) { return y(d.pitch); });
 
             // Plot pitch track
-            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_regression_pitchtrack.txt", function(error, data) {
+            d3.tsv("data/weiguojia_section_amateur_regression_pitchtrack.txt", function(error, data) {
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
@@ -275,7 +313,7 @@
             
                 // Scale the range of the data
                 x.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
-                y.domain([d3.min(data, function(d) { return d.pitch; }), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
+		y.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
 
                 // Add the pitchtrack path.
                 svg2.append("path")
@@ -299,7 +337,7 @@
             // Plot MIDI notes
             var MIDInote_s;
 
-            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt", function(error, data) {
                 data.forEach(function(d) {
                     d.startTime = +d.startTime;
                     d.pitch = +d.pitch;
@@ -421,6 +459,25 @@
 			                     svg2.select("#info_time").remove();
 			                 });
             });
+
+            // Add audio player
+            wave2.style.width = width + "px";
+            wave2.style.left = margin.left + "px";
+
+            var wavesurfer_s = WaveSurfer.create({
+                container: '#wave2',
+                waveColor: 'violet',
+                progressColor: 'purple',
+		fillParent: true,
+		height: 30
+		// minPxPerSec: 10
+            });
+            
+            wavesurfer_s.on('ready', function () {
+                // wavesurfer.play();
+            });
+            
+            wavesurfer_s.load('data/weiguojia_section_pro.wav');
 
         </script>
     </body>
