@@ -127,10 +127,46 @@
 		         .attr("fill", "DarkCyan")
 		         .attr("opacity", 0.7)
 		         .attr("id", function(d, i){var noteid = 'p'+i; return noteid; })    // Note ID for alignment visualization
-		         .on("mouseover", function(d, i) {d3.select("#p"+i).attr("fill", "Purple");
-							  d3.select("#s"+i).attr("fill", "Purple");})
-		         .on("mouseout", function(d, i) {d3.select("#p"+i).attr("fill", "DarkCyan");
-							 d3.select("#s"+i).attr("fill", "DarkCyan");});
+		         .on("mouseover", function(d, i) {
+			                      d3.select("#p"+i).attr("fill", "Purple");
+			                      d3.select("#s"+i).attr("fill", "Purple");
+			                      // Draw note boundary
+			                      svg1.append("line")
+				                  // .attr("x1", x(d.startTime))
+				                  .attr("x1", Number(d3.select(this).attr("x")))
+				                  .attr("y1", height)
+				                  .attr("x2", Number(d3.select(this).attr("x")))
+				                  .attr("y2", 0)
+				                  .style("stroke", "grey")
+				                  .style("stroke-dasharray", "3");
+			                      svg1.append("line")
+				                  .attr("x1", Number(d3.select(this).attr("x")) + Number(d3.select(this).attr("width"))) 
+				                  .attr("y1", height)
+				                  .attr("x2", Number(d3.select(this).attr("x")) + Number(d3.select(this).attr("width")))
+				                  .attr("y2", 0)
+				                  .style("stroke", "grey")
+				                  .style("stroke-dasharray", "3");
+			                      svg2.append("line")
+				                  .attr("x1", Number(d3.select("#s"+i).attr("x")))
+				                  .attr("y1", height)
+				                  .attr("x2", Number(d3.select("#s"+i).attr("x")))
+				                  .attr("y2", 0)
+				                  .style("stroke", "grey")
+				                  .style("stroke-dasharray", "3");
+			                      svg2.append("line")
+				                  .attr("x1", Number(d3.select("#s"+i).attr("x")) + Number(d3.select(this).attr("width"))) 
+				                  .attr("y1", height)
+				                  .attr("x2", Number(d3.select("#s"+i).attr("x")) + Number(d3.select(this).attr("width")))
+				                  .attr("y2", 0)
+				                  .style("stroke", "grey")
+				                  .style("stroke-dasharray", "3");
+			                  })
+		         .on("mouseout", function(d, i) {
+			                     d3.select("#p"+i).attr("fill", "DarkCyan");
+			                     d3.select("#s"+i).attr("fill", "DarkCyan");
+			                     svg1.selectAll('line').remove();
+			                     svg2.selectAll('line').remove();
+			                 });
             });
 
 
@@ -180,7 +216,8 @@
                 // Add the pitchtrack path.
                 svg2.append("path")
                     .attr("class", "line")
-                    .attr("d", pitchtrack2(data));
+                    .attr("d", pitchtrack2(data))
+		    .style("pointer-events", "none");    // Prevent mouseover failing on overlapping part
             
                 // Add the X Axis
                 svg2.append("g")
