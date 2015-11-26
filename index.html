@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html lang="en">
     <style>
         body { font: 12px Arial;}
@@ -29,9 +30,8 @@
     </div>
     <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:3px solid #73AD21;"></div>
     <head>
-        <meta charset="utf-8">
-        <title>D3 Test</title>
-        <script type="text/javascript" src="d3/d3.js"></script>
+        <title>Demo</title>
+        <script type="text/javascript" src="d3/d3.js" charset="utf-8"></script>
         <script type="text/javascript" src="wavesurfer.min.js"></script>
     </head>
 
@@ -150,6 +150,23 @@
 	    });
 
             // Plot MIDI notes
+
+            svg1.append("text")
+                .attr("id", "info_note")
+                .attr("transform", "translate(" + width + " ," + 10 + ")")
+                .attr("fill", "transparent")
+                .style("text-anchor", "end")
+            svg1.append("text")
+                .attr("id", "info_freq")
+                .attr("transform", "translate(" + width + " ," + 25 + ")")
+                .attr("fill", "transparent")
+                .style("text-anchor", "end")
+            svg1.append("text")
+                .attr("id", "info_time")
+                .attr("transform", "translate(" + width + " ," + 40 + ")")
+                .attr("fill", "transparent")
+                .style("text-anchor", "end")
+
             var MIDInote_t;
 
             d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
@@ -203,23 +220,14 @@
 				                  .style("stroke-dasharray", "3");
 
 			                      // Print note information
-			                      svg1.append("text")
-			                          .attr("id", "info_note")
-				                  .attr("transform", "translate(" + width + " ," + 10 + ")")
-			                          .attr("fill", "grey")
-				                  .style("text-anchor", "end")
+			                      svg1.select("#info_note")
+                                                  .attr("fill", "grey")
 				                  .text("Note: " + note_t);
-			                      svg1.append("text")
-			                          .attr("id", "info_freq")
-				                  .attr("transform", "translate(" + width + " ," + 25 + ")")
+			                      svg1.select("#info_freq")
 			                          .attr("fill", "grey")
-				                  .style("text-anchor", "end")
 				                  .text("Freq: " + note_t);
-			                      svg1.append("text")
-			                          .attr("id", "info_time")
-				                  .attr("transform", "translate(" + width + " ," + 40 + ")")
+			                      svg1.select("#info_time")
 			                          .attr("fill", "grey")
-				                  .style("text-anchor", "end")
 				                  .text("Time: " + noteStartTime_t.toFixed(2) + ' - ' + (Number(noteStartTime_t.toFixed(2)) + Number(noteDurationTime_t.toFixed(2))).toFixed(2) + 's (' + noteDurationTime_t.toFixed(2) + 's)');
 
 			                      // Act on the aligned note from student
@@ -252,23 +260,14 @@
 				                      .style("stroke", "grey")
 				                      .style("stroke-dasharray", "3");
 
-						  svg2.append("text")
-			                              .attr("id", "info_note")
-				                      .attr("transform", "translate(" + width + " ," + 10 + ")")
+						  svg2.select("#info_note")
 			                              .attr("fill", "grey")
-				                      .style("text-anchor", "end")
 				                      .text("Note: " + note_s);
-						  svg2.append("text")
-			                              .attr("id", "info_freq")
-				                      .attr("transform", "translate(" + width + " ," + 25 + ")")
+						  svg2.select("#info_freq")
 			                              .attr("fill", "grey")
-				                      .style("text-anchor", "end")
 				                      .text("Freq: " + note_s);
-						  svg2.append("text")
-			                              .attr("id", "info_time")
-				                      .attr("transform", "translate(" + width + " ," + 40 + ")")
+						  svg2.select("#info_time")
 			                              .attr("fill", "grey")
-				                      .style("text-anchor", "end")
 				                      .text("Time: " + noteStartTime_s.toFixed(2) + ' - ' + (Number(noteStartTime_s.toFixed(2)) + Number(noteDurationTime_s.toFixed(2))).toFixed(2) + 's (' + noteDurationTime_s.toFixed(2) + 's)');
 					      }
 			                  })
@@ -278,9 +277,12 @@
 			                     // svg1.selectAll('line').remove();
 			                     svg1.select('#noteBoundaryL').remove();
 			                     svg1.select('#noteBoundaryR').remove();
-			                     svg1.select("#info_note").remove();
-			                     svg1.select("#info_freq").remove();
-			                     svg1.select("#info_time").remove();
+			                     // svg1.select("#info_note").remove();
+			                     // svg1.select("#info_freq").remove();
+			                     // svg1.select("#info_time").remove();
+			                     svg1.select("#info_note").attr("fill", "transparent");
+			                     svg1.select("#info_freq").attr("fill", "transparent");
+			                     svg1.select("#info_time").attr("fill", "transparent");
 
 			                     // Act on the aligned note from student
 			                     var pair_s = dictT2S_note[i].student;
@@ -289,9 +291,12 @@
 						 // d3.select("#s"+i).attr("fill", "DarkCyan");
 						 svg2.select('#noteBoundaryL').remove();
 						 svg2.select('#noteBoundaryR').remove();
-						 svg2.select("#info_note").remove();
-						 svg2.select("#info_freq").remove();
-						 svg2.select("#info_time").remove();
+						 // svg2.select("#info_note").remove();
+						 // svg2.select("#info_freq").remove();
+						 // svg2.select("#info_time").remove();
+						 svg2.select("#info_note").attr("fill", "transparent");
+						 svg2.select("#info_freq").attr("fill", "transparent");
+						 svg2.select("#info_time").attr("fill", "transparent");
 					     }
 			                 });
             });
@@ -311,6 +316,8 @@
 		height: 30
 		// minPxPerSec: 10
             });
+
+            wavesurfer_t.load('data/weiguojia_section_pro.wav');
 
             // Plot moving playback cursor on pitchtrack
             svg1.append("line")
@@ -339,8 +346,16 @@
 		    .attr("y2", 0)
 		    .style("stroke", "black");
             });
-            
-            wavesurfer_t.load('data/weiguojia_section_pro.wav');
+
+            wavesurfer_t.on('seek', function () {
+                currentTime = wavesurfer_t.getCurrentTime();
+		d3.select("#playbackPointer_t")
+		    .attr("x1", x_t(currentTime))
+		    .attr("y1", height)
+		    .attr("x2", x_t(currentTime))
+		    .attr("y2", 0)
+		    .style("stroke", "black");
+            });
 
             function playButton_t_onclick () {
 		wavesurfer_t.playPause();
@@ -424,6 +439,23 @@
             });
 
             // Plot MIDI notes
+
+            svg2.append("text")
+                .attr("id", "info_note")
+                .attr("transform", "translate(" + width + " ," + 10 + ")")
+                .attr("fill", "transparent")
+                .style("text-anchor", "end")
+            svg2.append("text")
+                .attr("id", "info_freq")
+                .attr("transform", "translate(" + width + " ," + 25 + ")")
+                .attr("fill", "transparent")
+                .style("text-anchor", "end")
+            svg2.append("text")
+                .attr("id", "info_time")
+                .attr("transform", "translate(" + width + " ," + 40 + ")")
+                .attr("fill", "transparent")
+                .style("text-anchor", "end")
+
             var MIDInote_s;
 
             d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt", function(error, data) {
@@ -477,24 +509,16 @@
 				                  .style("stroke-dasharray", "3");
 
 			                      // Print note information
-			                      svg2.append("text")
-			                          .attr("id", "info_note")
-				                  .attr("transform", "translate(" + width + " ," + 10 + ")")
-			                          .attr("fill", "grey")
-				                  .style("text-anchor", "end")
+			                      svg2.select("#info_note")
+                                                  .attr("fill", "grey")
 				                  .text("Note: " + note_s);
-			                      svg2.append("text")
-			                          .attr("id", "info_freq")
-				                  .attr("transform", "translate(" + width + " ," + 25 + ")")
+			                      svg2.select("#info_freq")
 			                          .attr("fill", "grey")
-				                  .style("text-anchor", "end")
 				                  .text("Freq: " + note_s);
-			                      svg2.append("text")
-			                          .attr("id", "info_time")
-				                  .attr("transform", "translate(" + width + " ," + 40 + ")")
+			                      svg2.select("#info_time")
 			                          .attr("fill", "grey")
-				                  .style("text-anchor", "end")
 				                  .text("Time: " + noteStartTime_s.toFixed(2) + ' - ' + (Number(noteStartTime_s.toFixed(2)) + Number(noteDurationTime_s.toFixed(2))).toFixed(2) + 's (' + noteDurationTime_s.toFixed(2) + 's)');
+
 
 			                      // Act on the aligned note from teacher
 			                      var pair_t = dictS2T_note[i].teacher;
@@ -526,46 +550,35 @@
 				                      .style("stroke", "grey")
 				                      .style("stroke-dasharray", "3");
 
-						  svg1.append("text")
-			                              .attr("id", "info_note")
-				                      .attr("transform", "translate(" + width + " ," + 10 + ")")
+						  svg1.select("#info_note")
 			                              .attr("fill", "grey")
-				                      .style("text-anchor", "end")
 				                      .text("Note: " + note_t);
-						  svg1.append("text")
-			                              .attr("id", "info_freq")
-				                      .attr("transform", "translate(" + width + " ," + 25 + ")")
+						  svg1.select("#info_freq")
 			                              .attr("fill", "grey")
-				                      .style("text-anchor", "end")
 				                      .text("Freq: " + note_t);
-						  svg1.append("text")
-			                              .attr("id", "info_time")
-				                      .attr("transform", "translate(" + width + " ," + 40 + ")")
+						  svg1.select("#info_time")
 			                              .attr("fill", "grey")
-				                      .style("text-anchor", "end")
 				                      .text("Time: " + noteStartTime_t.toFixed(2) + ' - ' + (Number(noteStartTime_t.toFixed(2)) + Number(noteDurationTime_t.toFixed(2))).toFixed(2) + 's (' + noteDurationTime_t.toFixed(2) + 's)');
 					      }
 			                  })
 		         .on("mouseout", function(d, i) {
 			                     // d3.select("#t"+i).attr("fill", "DarkCyan");
 			                     d3.selectAll("rect").attr("fill", "DarkCyan");
-			                     // svg1.selectAll('line').remove();
-			                     svg1.select('#noteBoundaryL').remove();
-			                     svg1.select('#noteBoundaryR').remove();
-			                     svg1.select("#info_note").remove();
-			                     svg1.select("#info_freq").remove();
-			                     svg1.select("#info_time").remove();
+			                     svg2.select('#noteBoundaryL').remove();
+			                     svg2.select('#noteBoundaryR').remove();
+			                     svg2.select("#info_note").attr("fill", "transparent");
+			                     svg2.select("#info_freq").attr("fill", "transparent");
+			                     svg2.select("#info_time").attr("fill", "transparent");
 
 			                     // Act on the aligned note from student
 			                     var pair_t = dictS2T_note[i].teacher;
 
 			                     if (!isNaN(pair_t)) {
-						 svg2.select('#noteBoundaryL').remove();
-						 svg2.select('#noteBoundaryR').remove();
-						 svg2.select("#info_note").remove();
-						 svg2.select("#info_freq").remove();
-						 svg2.select("#info_time").remove();
-					     }
+						 svg1.select('#noteBoundaryL').remove();
+						 svg1.select('#noteBoundaryR').remove();
+						 svg1.select("#info_note").attr("fill", "transparent");
+						 svg1.select("#info_freq").attr("fill", "transparent");
+						 svg1.select("#info_time").attr("fill", "transparent");					     }
 			                 });
             });
 
