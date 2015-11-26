@@ -120,6 +120,7 @@
 		};
 
 		this.stopRecording = function() {
+                        document.getElementById("recordingInfo").innerHTML = "Recording finished. Click and hold to record again.";
 			console.log("Recording Stopped ....");
 			this.recording = false;
 			stopRec();

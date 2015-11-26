@@ -31,10 +31,11 @@
     <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:1px solid lightgrey;"></div>
     <div ng-controller="RecordController as rec" id="control3" style="position:relative; top:55px; left:0px; margin:0 auto;">
     <button id="recordButton" ng-mousedown="rec.startRecording()" ng-mouseup="rec.stopRecording()" ng-class="{'btn-danger': rec.isRecording(), btn: true}">
-    <b>Click and hold to Record!</b>
+    <b>Click and hold to record!</b>
     </button>
     <b><span id="recordingInfo" style="font-size:14px"> Ready to record ...</span></b>
     </div>
+
     <head>
         <title>Demo</title>
         <script type="text/javascript" src="thirdparty/d3/d3.js" charset="utf-8"></script>
