@@ -388,7 +388,14 @@
 						 svg2.select("#info_freq").attr("fill", "transparent");
 						 svg2.select("#info_time").attr("fill", "transparent");
 					     }
-			                 });
+			                 })
+		         // Play note on click
+                         .on("click", function (d, i) {
+			                  var noteStartTime = d.startTime;
+			                  var noteDurationTime = d.duration;
+			                  var noteEndTime = noteStartTime + noteDurationTime;
+			                  wavesurfer_t.play(noteStartTime, noteEndTime);
+			 });
             });
 
             // Add audio player
@@ -750,7 +757,14 @@
 						 svg1.select("#info_note").attr("fill", "transparent");
 						 svg1.select("#info_freq").attr("fill", "transparent");
 						 svg1.select("#info_time").attr("fill", "transparent");					     }
-			                 });
+			                 })
+		         // Play note on click
+                         .on("click", function (d, i) {
+			                  var noteStartTime = d.startTime;
+			                  var noteDurationTime = d.duration;
+			                  var noteEndTime = noteStartTime + noteDurationTime;
+			                  wavesurfer_s.play(noteStartTime, noteEndTime);
+			 });
             });
 
             // Add audio player
