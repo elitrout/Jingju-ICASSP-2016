@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<html lang="en">
+<html lang="en" ng-app="hamrSJ">
     <style>
         body { font: 12px Arial;}
         
@@ -29,13 +29,23 @@
         <button id="playButton_s" onclick="playButton_s_onclick()">Play</button>
     </div>
     <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:1px solid lightgrey;"></div>
+    <div ng-controller="RecordController as rec" id="control3" style="position:relative; top:55px; left:0px; margin:0 auto;">
+    <button id="recordButton" ng-mousedown="rec.startRecording()" ng-mouseup="rec.stopRecording()" ng-class="{'btn-danger': rec.isRecording(), btn: true}">
+    <b>Click and hold to Record!</b>
+    </button>
+    <b><span id="recordingInfo" style="font-size:14px"> Ready to record ...</span></b>
+    </div>
     <head>
         <title>Demo</title>
-        <script type="text/javascript" src="d3/d3.js" charset="utf-8"></script>
-        <script type="text/javascript" src="wavesurfer.min.js"></script>
+        <script type="text/javascript" src="thirdparty/d3/d3.js" charset="utf-8"></script>
+        <script type="text/javascript" src="thirdparty/wavesurfer.min.js"></script>
+	<script type="text/javascript" src="thirdparty/angular.min.js"></script>
+	<script type="text/javascript" src="thirdparty/recorder.js"></script>
+        <script type="text/javascript" src="thirdparty/app.js"></script>
+        <script src="thirdparty/jquery.min.js"></script>
     </head>
 
-    <body>
+    <body ng-controller="SJController as sj">
         <script type="text/javascript">
             // Set the dimensions of the canvas / graph
             var margin = {top: 50, right: 20, bottom: 40, left: 50},
