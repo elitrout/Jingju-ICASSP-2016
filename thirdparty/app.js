@@ -103,6 +103,7 @@
                     //console.log(e.slice(0));
 		    //Recorder.forceDownload(e, "filename.wav");
 		  });
+
 		};
 
 
@@ -119,11 +120,16 @@
 			$timeout(record, 0);
 		};
 
-		this.stopRecording = function() {
-                        document.getElementById("recordingInfo").innerHTML = "Recording finished. Click and hold to record again.";
+		this.stopRecording = function(callback) {
 			console.log("Recording Stopped ....");
 			this.recording = false;
 			stopRec();
+
+                        // Update recordingInfo
+                        document.getElementById("recordingInfo").innerHTML = "Recording finished. Click and hold to record again.";
+
+                        // Update data visualization
+		        updateData();
 		};
 	});
 

@@ -33,7 +33,7 @@
     <button id="recordButton" ng-mousedown="rec.startRecording()" ng-mouseup="rec.stopRecording()" ng-class="{'btn-danger': rec.isRecording(), btn: true}">
     <b>Click and hold to record!</b>
     </button>
-    <b><span id="recordingInfo" style="font-size:14px"> Ready to record ...</span></b>
+    <b><span id="recordingInfo" style="font-size:14px"> Ready to record.</span></b>
     </div>
 
     <head>
@@ -111,15 +111,17 @@
                 .y(function(d) { return y_t(d.pitch); });
 
             // Plot pitch track
-            d3.tsv("data/weiguojia_section_pro_regression_pitchtrack.txt", function(error, data) {
+            d3.csv("data/teacher_regression_pitchtrack.csv", function(error, data) {
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
                 });
             
                 // Scale the range of the data
-                x_t.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
-                y_t.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
+                // x_t.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
+                // y_t.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
+                x_t.domain([0, d3.max(data, function(d) { return d.time; })]);
+                y_t.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]);
 
                 // Add the pitchtrack path.
                 svg1.append("path")
@@ -149,45 +151,48 @@
 		    .style("stroke-dasharray", "1")
 		    .style("display", "none");
 
+		// Functions for mouse events
 		var bisectTime = d3.bisector(function(d) { return d.time; }).left;
 
 		function mousemove() {                            
-		    var x0 = x_t.invert(d3.mouse(this)[0]),         
-		    i = bisectTime(data, x0, 1),              
-		    d0 = data[i - 1],                         
-		    d1 = data[i],                             
-		    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
-
-		    svg1.select("#focus")                      
-			.attr("x1", d3.mouse(this)[0])
-			.attr("y1", height)
-			.attr("x2", d3.mouse(this)[0])
-			.attr("y2", 0)
-			.attr("fill", "black");
-
-		    // Show pitch information
-		    svg1.select("#info_note")
-			.attr("fill", "grey")
-			.text("Note: " + d.pitch);
-		    svg1.select("#info_freq")
-			.attr("fill", "grey")
-			.text("Freq: " + d.pitch);
-		    svg1.select("#info_time")
-			.attr("fill", "grey")
-		        .text("Time: " + d.time)
+                    // var x0 = x_t.invert(d3.mouse(svg1.select("#focusArea").node())[0]),
+                    var x0 = x_t.invert(d3.mouse(this)[0]),
+                        i = bisectTime(data, x0, 1),             
+                        d0 = data[i - 1],              
+                        d1 = data[i],                         
+                        d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+    		    
+                    svg1.select("#focus")                      
+            		// .attr("x1", d3.mouse(svg1.select("#focusArea").node())[0])
+            		.attr("x1", d3.mouse(this)[0])
+            		.attr("y1", height)
+            		.attr("x2", d3.mouse(this)[0])
+            		.attr("y2", 0)
+            		.attr("fill", "black");
+		    
+                    // Show pitch information
+                    svg1.select("#info_note")
+            		.attr("fill", "grey")
+            		.text("Note: " + d.pitch);
+                    svg1.select("#info_freq")
+            		.attr("fill", "grey")
+            		.text("Freq: " + d.pitch);
+                    svg1.select("#info_time")
+            		.attr("fill", "grey")
+            		.text("Time: " + d.time)
 		}
-
+		
 		// Navigate audio
 		function mouseclick() {                            
-		    var x0 = x_t.invert(d3.mouse(this)[0]);
-		    i = bisectTime(data, x0, 1),              
-		    d0 = data[i - 1],                         
-		    d1 = data[i],                             
-		    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
-
-		    var progress = d.time / x_t.domain()[1];
-
-		    wavesurfer_t.seekTo(progress);
+                    var x0 = x_t.invert(d3.mouse(this)[0]);
+                    i = bisectTime(data, x0, 1),              
+                    d0 = data[i - 1],                         
+                    d1 = data[i],                             
+                    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+		    
+                    var progress = d.time / x_t.domain()[1];
+		    
+                    wavesurfer_t.seekTo(progress);
 		}
 
 		svg1.append("rect")
@@ -495,19 +500,22 @@
                 .x(function(d) { return x_s(d.time); })
                 .y(function(d) { return y_s(d.pitch); });
 
+
+
             // Plot pitch track
-            d3.tsv("data/weiguojia_section_amateur_regression_pitchtrack.txt", function(error, data) {
+            d3.csv("data/student_regression_pitchtrack.csv", function(error, data) {
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
                 });
             
                 // Scale the range of the data
-                x_s.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
-		y_s.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]).nice();
+                x_s.domain([0, d3.max(data, function(d) { return d.time; })]);
+		y_s.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]);
 
                 // Add the pitchtrack path.
                 svg2.append("path")
+		    .attr("id", "path_s")
                     .attr("class", "line")
                     .attr("d", pitchtrack2(data))
 		    .style("pointer-events", "none");    // Prevent mouseover failing on overlapping part
@@ -566,6 +574,7 @@
 		// Navigate audio
 		function mouseclick() {                            
 		    var x0 = x_s.invert(d3.mouse(this)[0]);
+		    // var x0 = x_s.invert(d3.mouse(svg2.select("#focusArea").node())[0]);
 		    i = bisectTime(data, x0, 1),              
 		    d0 = data[i - 1],                         
 		    d1 = data[i],                             
@@ -576,7 +585,9 @@
 		    wavesurfer_s.seekTo(progress);
 		}
 
+		// Focus detection area
 		svg2.append("rect")
+		    .attr("id", "focusArea")
 		    .attr("class", "overlay")
 		    .attr("width", width)
 		    .attr("height", height)
@@ -805,6 +816,114 @@
 		} else {
 		    document.getElementById("playButton_s").innerHTML = "Play";
 		}
+	    }
+
+            // Update visualization when finish recording
+            function updateData () {
+		// Update student pitch track
+		d3.csv("data/teacher_regression_pitchtrack.csv", function(error, data) {
+                    data.forEach(function(d) {
+			d.time = +d.time;
+			d.pitch = +d.pitch;
+                    });
+		    
+                    // Scale the range of the data
+                    x_s.domain([0, d3.max(data, function(d) { return d.time; })]);
+		    y_s.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]);
+
+                    // Update X Axis
+                    svg2.select(".x.axis")
+			.call(xAxis_s);
+		    
+                    // Update Y Axis
+                    svg2.select(".y.axis")
+			.call(yAxis_s);
+
+		    // Update pitch
+		    svg2.select("#path_s").attr("d", pitchtrack2(data));
+
+		    var bisectTime = d3.bisector(function(d) { return d.time; }).left;
+
+		    function mousemove() {                            
+			var x0 = x_s.invert(d3.mouse(svg2.select("#focusArea").node())[0]),         
+			i = bisectTime(data, x0, 1),              
+			d0 = data[i - 1],                         
+			d1 = data[i],                             
+			d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+
+			svg2.select("#focus")                      
+			    .attr("x1", d3.mouse(svg2.select("#focusArea").node())[0])
+			    .attr("y1", height)
+			    .attr("x2", d3.mouse(svg2.select("#focusArea").node())[0])
+			    .attr("y2", 0)
+			    .attr("fill", "black");
+
+			// Show pitch information
+			svg2.select("#info_note")
+			    .attr("fill", "grey")
+			    .text("Note: " + d.pitch);
+			svg2.select("#info_freq")
+			    .attr("fill", "grey")
+			    .text("Freq: " + d.pitch);
+			svg2.select("#info_time")
+			    .attr("fill", "grey")
+		            .text("Time: " + d.time)
+		    }
+
+		    // Navigate audio
+		    function mouseclick() {                            
+			var x0 = x_s.invert(d3.mouse(svg2.select("#focusArea").node())[0]);
+			// var x0 = x_s.invert(d3.mouse(svg2.select("#focusArea").node())[0]);
+			i = bisectTime(data, x0, 1),              
+			d0 = data[i - 1],                         
+			d1 = data[i],                             
+			d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+
+			var progress = d.time / x_s.domain()[1];
+
+			wavesurfer_s.seekTo(progress);
+		    }
+
+		    svg2.select("#focusArea").on("mousemove", mousemove)
+                                             .on("click", mouseclick);
+
+		    // Update audio
+		    wavesurfer_s.load('data/weiguojia_section_pro.wav');
+
+		    wavesurfer_s.unAll();
+
+		    wavesurfer_s.on('audioprocess', function () {
+			currentTime = wavesurfer_s.getCurrentTime();
+			d3.select("#playbackPointer_s")
+			    .attr("x1", x_s(currentTime))
+			    .attr("y1", height)
+			    .attr("x2", x_s(currentTime))
+			    .attr("y2", 0)
+			    .style("stroke", "black");
+		    });
+
+		    wavesurfer_s.on('finish', function () {
+			d3.select("#playbackPointer_s")
+			    .attr("x1", x_s(0))
+			    .attr("y1", height)
+			    .attr("x2", x_s(0))
+			    .attr("y2", 0)
+			    .style("stroke", "black");
+
+			document.getElementById("playButton_t").innerHTML = "Play";
+		    });
+
+		    wavesurfer_s.on('seek', function () {
+			currentTime = wavesurfer_s.getCurrentTime();
+			d3.select("#playbackPointer_s")
+			    .attr("x1", x_s(currentTime))
+			    .attr("y1", height)
+			    .attr("x2", x_s(currentTime))
+			    .attr("y2", 0)
+			    .style("stroke", "black");
+		    });
+
+		})
 	    }
 
         </script>
