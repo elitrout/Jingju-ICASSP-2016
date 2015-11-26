@@ -23,12 +23,12 @@
     <div id="control1" style="position:relative; top:35px; left:0px; margin:0 auto;">
         <button id="playButton_t" onclick="playButton_t_onclick()" style="text-align: middle;">Play</button>
     </div>
-    <div id="wave1" style="position:relative; margin:0 left; top:10px; height:30px; border:3px solid #73AD21;"></div>
+    <div id="wave1" style="position:relative; margin:0 left; top:10px; height:30px; border:1px solid lightgrey;"></div>
     <div id="area2" style="position:relative; top:20px; left:0px; margin:0 auto;"></div>
     <div id="control2" style="position:relative; top:55px; left:0px; margin:0 auto;">
         <button id="playButton_s" onclick="playButton_s_onclick()">Play</button>
     </div>
-    <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:3px solid #73AD21;"></div>
+    <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:1px solid lightgrey;"></div>
     <head>
         <title>Demo</title>
         <script type="text/javascript" src="d3/d3.js" charset="utf-8"></script>
@@ -125,7 +125,74 @@
                 svg1.append("g")
                     .attr("class", "y axis")
                     .call(yAxis_t);
-            
+
+		// Create focus line
+		svg1.append("line")
+		    .attr("id", "focus")
+                    .attr("x1", x_t(0))
+                    .attr("y1", height)
+		    .attr("x2", x_t(0))
+		    .attr("y2", 0)
+                    // .attr("fill", "transparent")
+		    .style("stroke", "black")
+		    .style("stroke-dasharray", "1")
+		    .style("display", "none");
+
+		var bisectTime = d3.bisector(function(d) { return d.time; }).left;
+
+		function mousemove() {                            
+		    var x0 = x_t.invert(d3.mouse(this)[0]),         
+		    i = bisectTime(data, x0, 1),              
+		    d0 = data[i - 1],                         
+		    d1 = data[i],                             
+		    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+
+		    svg1.select("#focus")                      
+			.attr("x1", d3.mouse(this)[0])
+			.attr("y1", height)
+			.attr("x2", d3.mouse(this)[0])
+			.attr("y2", 0)
+			.attr("fill", "black");
+
+		    // Show pitch information
+		    svg1.select("#info_note")
+			.attr("fill", "grey")
+			.text("Note: " + d.pitch);
+		    svg1.select("#info_freq")
+			.attr("fill", "grey")
+			.text("Freq: " + d.pitch);
+		    svg1.select("#info_time")
+			.attr("fill", "grey")
+		        .text("Time: " + d.time)
+		}
+
+		// Navigate audio
+		function mouseclick() {                            
+		    var x0 = x_t.invert(d3.mouse(this)[0]);
+		    i = bisectTime(data, x0, 1),              
+		    d0 = data[i - 1],                         
+		    d1 = data[i],                             
+		    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+
+		    var progress = d.time / x_t.domain()[1];
+
+		    wavesurfer_t.seekTo(progress);
+		}
+
+		svg1.append("rect")
+		    .attr("class", "overlay")
+		    .attr("width", width)
+		    .attr("height", height)
+		    .attr("fill", "transparent")
+		    .on("mouseover", function() { svg1.select("#focus").style("display", null); })
+		    .on("mouseout", function() {
+			                svg1.select("#focus").style("display", "none");
+			                svg1.select("#info_note").attr("fill", "transparent");
+			                svg1.select("#info_freq").attr("fill", "transparent");
+			                svg1.select("#info_time").attr("fill", "transparent");
+		                    })
+		    .on("mousemove", mousemove)
+		    .on("click", mouseclick);
             });
 
             // Read alignment dict
@@ -192,6 +259,9 @@
 		         .attr("opacity", 0.7)
 		         .attr("id", function(d, i){var noteid = 't'+i; return noteid; })    // Note ID for alignment visualization
 		         .on("mouseover", function(d, i) {
+			                      // Hide focus line
+			                      svg1.select("#focus").style("display", "none");
+			                      // Highlight current note
 			                      d3.select(this).attr("fill", "Purple");
 			                      // Draw note boundary
 			                      var note_t = d.pitch
@@ -272,8 +342,11 @@
 					      }
 			                  })
 		         .on("mouseout", function(d, i) {
+			                     // Show focus line
+			                     svg1.select("#focus").style("display", null);
 			                     // d3.select("#t"+i).attr("fill", "DarkCyan");
-			                     d3.selectAll("rect").attr("fill", "DarkCyan");
+			                     // d3.selectAll("rect").attr("fill", "DarkCyan");
+			                     d3.select(this).attr("fill", "DarkCyan");
 			                     // svg1.selectAll('line').remove();
 			                     svg1.select('#noteBoundaryL').remove();
 			                     svg1.select('#noteBoundaryR').remove();
@@ -289,6 +362,7 @@
 
 			                     if (!isNaN(pair_s)) {
 						 // d3.select("#s"+i).attr("fill", "DarkCyan");
+						 svg2.select("#s"+pair_s).attr("fill", "DarkCyan");
 						 svg2.select('#noteBoundaryL').remove();
 						 svg2.select('#noteBoundaryR').remove();
 						 // svg2.select("#info_note").remove();
@@ -310,8 +384,8 @@
 
             var wavesurfer_t = WaveSurfer.create({
                 container: '#wave1',
-                waveColor: 'violet',
-                progressColor: 'purple',
+                waveColor: 'grey',
+                progressColor: 'DarkTurquoise',
 		fillParent: true,
 		height: 30
 		// minPxPerSec: 10
@@ -435,7 +509,60 @@
                 svg2.append("g")
                     .attr("class", "y axis")
                     .call(yAxis_s);
-            
+
+		// Create focus line
+		svg2.append("line")
+		    .attr("id", "focus")
+                    .attr("x1", x_s(0))
+                    .attr("y1", height)
+		    .attr("x2", x_s(0))
+		    .attr("y2", 0)
+                    // .attr("fill", "transparent")
+		    .style("stroke", "black")
+		    .style("stroke-dasharray", "1")
+		    .style("display", "none");
+
+		var bisectTime = d3.bisector(function(d) { return d.time; }).left;
+
+		function mousemove() {                            
+		    var x0 = x_s.invert(d3.mouse(this)[0]),         
+		    i = bisectTime(data, x0, 1),              
+		    d0 = data[i - 1],                         
+		    d1 = data[i],                             
+		    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+
+		    svg2.select("#focus")                      
+			.attr("x1", d3.mouse(this)[0])
+			.attr("y1", height)
+			.attr("x2", d3.mouse(this)[0])
+			.attr("y2", 0)
+			.attr("fill", "black");
+
+		    // Show pitch information
+		    svg2.select("#info_note")
+			.attr("fill", "grey")
+			.text("Note: " + d.pitch);
+		    svg2.select("#info_freq")
+			.attr("fill", "grey")
+			.text("Freq: " + d.pitch);
+		    svg2.select("#info_time")
+			.attr("fill", "grey")
+		        .text("Time: " + d.time)
+		}
+
+		svg2.append("rect")
+		    .attr("class", "overlay")
+		    .attr("width", width)
+		    .attr("height", height)
+		    .attr("fill", "transparent")
+		    .on("mouseover", function() { svg2.select("#focus").style("display", null); })
+		    .on("mouseout", function() {
+			                svg2.select("#focus").style("display", "none");
+			                svg2.select("#info_note").attr("fill", "transparent");
+			                svg2.select("#info_freq").attr("fill", "transparent");
+			                svg2.select("#info_time").attr("fill", "transparent");
+		                    })
+		    .on("mousemove", mousemove);
             });
 
             // Plot MIDI notes
@@ -480,6 +607,9 @@
 		         .attr("opacity", 0.7)
 		         .attr("id", function(d, i){var noteid = 's'+i; return noteid; })    // Note ID for alignment visualization
 		         .on("mouseover", function(d, i) {
+			                      // Hide focus line
+			                      svg1.select("#focus").style("display", "none");
+			                      // Highlight current note
 			                      d3.select(this).attr("fill", "Purple");
 			                      // Draw note boundary
 			                      var note_s = d.pitch
@@ -562,8 +692,10 @@
 					      }
 			                  })
 		         .on("mouseout", function(d, i) {
-			                     // d3.select("#t"+i).attr("fill", "DarkCyan");
-			                     d3.selectAll("rect").attr("fill", "DarkCyan");
+			                     // Show focus line
+			                     svg1.select("#focus").style("display", null);
+
+			                     d3.select(this).attr("fill", "DarkCyan");
 			                     svg2.select('#noteBoundaryL').remove();
 			                     svg2.select('#noteBoundaryR').remove();
 			                     svg2.select("#info_note").attr("fill", "transparent");
@@ -574,6 +706,7 @@
 			                     var pair_t = dictS2T_note[i].teacher;
 
 			                     if (!isNaN(pair_t)) {
+						 svg1.select("#t"+pair_t).attr("fill", "DarkCyan");
 						 svg1.select('#noteBoundaryL').remove();
 						 svg1.select('#noteBoundaryR').remove();
 						 svg1.select("#info_note").attr("fill", "transparent");
@@ -589,8 +722,8 @@
 
             var wavesurfer_s = WaveSurfer.create({
                 container: '#wave2',
-                waveColor: 'violet',
-                progressColor: 'purple',
+                waveColor: 'grey',
+                progressColor: 'DarkTurquoise',
 		fillParent: true,
 		height: 30
 		// minPxPerSec: 10
