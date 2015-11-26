@@ -550,6 +550,19 @@
 		        .text("Time: " + d.time)
 		}
 
+		// Navigate audio
+		function mouseclick() {                            
+		    var x0 = x_s.invert(d3.mouse(this)[0]);
+		    i = bisectTime(data, x0, 1),              
+		    d0 = data[i - 1],                         
+		    d1 = data[i],                             
+		    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+
+		    var progress = d.time / x_s.domain()[1];
+
+		    wavesurfer_s.seekTo(progress);
+		}
+
 		svg2.append("rect")
 		    .attr("class", "overlay")
 		    .attr("width", width)
@@ -562,7 +575,8 @@
 			                svg2.select("#info_freq").attr("fill", "transparent");
 			                svg2.select("#info_time").attr("fill", "transparent");
 		                    })
-		    .on("mousemove", mousemove);
+		    .on("mousemove", mousemove)
+		    .on("click", mouseclick);
             });
 
             // Plot MIDI notes
@@ -693,7 +707,7 @@
 			                  })
 		         .on("mouseout", function(d, i) {
 			                     // Show focus line
-			                     svg1.select("#focus").style("display", null);
+			                     svg2.select("#focus").style("display", null);
 
 			                     d3.select(this).attr("fill", "DarkCyan");
 			                     svg2.select('#noteBoundaryL').remove();
@@ -729,6 +743,8 @@
 		// minPxPerSec: 10
             });
 
+            wavesurfer_s.load('data/weiguojia_section_amateur.wav');
+
             // Plot moving playback cursor on pitchtrack
             svg2.append("line")
 		.attr("id", "playbackPointer_s")
@@ -756,8 +772,16 @@
 		    .attr("y2", 0)
 		    .style("stroke", "black");
             });
-            
-            wavesurfer_s.load('data/weiguojia_section_amateur.wav');
+
+            wavesurfer_s.on('seek', function () {
+                currentTime = wavesurfer_s.getCurrentTime();
+		d3.select("#playbackPointer_s")
+		    .attr("x1", x_s(currentTime))
+		    .attr("y1", height)
+		    .attr("x2", x_s(currentTime))
+		    .attr("y2", 0)
+		    .style("stroke", "black");
+            });
 
             function playButton_s_onclick () {
 		wavesurfer_s.playPause();
