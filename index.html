@@ -250,7 +250,7 @@
                 data.forEach(function(d) {
                     d.startTime = +d.startTime;
                     d.pitch = +d.pitch;
-	    	    d.duration = +d.duration;
+                    d.duration = +d.duration;
                 });
 		
 		MIDInote_t = data;
@@ -429,6 +429,8 @@
 		    .attr("x2", x_t(0))
 		    .attr("y2", 0)
 		    .style("stroke", "black");
+
+		document.getElementById("playButton_t").innerHTML = "Play";
             });
 
             wavesurfer_t.on('seek', function () {
@@ -781,6 +783,8 @@
 		    .attr("x2", x_s(0))
 		    .attr("y2", 0)
 		    .style("stroke", "black");
+
+		document.getElementById("playButton_t").innerHTML = "Play";
             });
 
             wavesurfer_s.on('seek', function () {
