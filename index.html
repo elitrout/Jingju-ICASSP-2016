@@ -48,6 +48,24 @@
 
     <body ng-controller="SJController as sj">
         <script type="text/javascript">
+            // Data file address
+            var pitchtrack_t_default = "data/teacher_regression_pitchtrack.csv",
+                pitchtrack_s_default = "data/student_regression_pitchtrack.csv",
+                noteSeg_t_default = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt",
+                noteSeg_s_default = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt",
+                noteAlign_S2T_default = "data/amateur2pro.txt",
+                noteAlign_T2S_default = "data/pro2amateur.txt",
+                audio_t_default = "data/weiguojia_section_pro.wav",
+                audio_s_default = "data/weiguojia_section_amateur.wav",
+                pitchtrack_t_update,
+                pitchtrack_s_update = "data/teacher_regression_pitchtrack.csv",
+                noteSeg_t_update = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt",
+                noteSeg_s_update = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt",
+                noteAlign_S2T_update = "data/amateur2pro.txt",
+                noteAlign_T2S_update = "data/pro2amateur.txt",
+                audio_t_update,
+                audio_s_update = "data/weiguojia_section_pro.wav";
+
             // Set the dimensions of the canvas / graph
             var margin = {top: 50, right: 20, bottom: 40, left: 50},
                 width = 800 - margin.left - margin.right,
@@ -111,7 +129,8 @@
                 .y(function(d) { return y_t(d.pitch); });
 
             // Plot pitch track
-            d3.csv("data/teacher_regression_pitchtrack.csv", function(error, data) {
+            // d3.csv("data/teacher_regression_pitchtrack.csv", function(error, data) {
+            d3.csv(pitchtrack_t_default, function(error, data) {
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
@@ -234,7 +253,8 @@
 
             // Read alignment dict
             var dictS2T_note;
-            d3.tsv("data/amateur2pro.txt", function(error, data) {
+            // d3.tsv("data/amateur2pro.txt", function(error, data) {
+            d3.tsv(noteAlign_S2T_default, function(error, data) {
                 data.forEach(function(d) {
                     d.student = d.student;
                     d.teacher = d.teacher;
@@ -244,7 +264,8 @@
 	    });
 
             var dictT2S_note;
-            d3.tsv("data/pro2amateur.txt", function(error, data) {
+            // d3.tsv("data/pro2amateur.txt", function(error, data) {
+            d3.tsv(noteAlign_T2S_default, function(error, data) {
                 data.forEach(function(d) {
                     d.student = d.student;
                     d.teacher = d.teacher;
@@ -273,7 +294,8 @@
 
             var MIDInote_t;
 
-            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+            // d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+            d3.tsv(noteSeg_t_default, function(error, data) {
                 data.forEach(function(d) {
                     d.startTime = +d.startTime;
                     d.pitch = +d.pitch;
@@ -473,7 +495,8 @@
 		// minPxPerSec: 10
             });
 
-            wavesurfer_t.load('data/weiguojia_section_pro.wav');
+            // wavesurfer_t.load('data/weiguojia_section_pro.wav');
+            wavesurfer_t.load(audio_t_default);
 
             // Plot moving playback cursor on pitchtrack
             svg1.append("line")
@@ -569,7 +592,8 @@
 
 
             // Plot pitch track
-            d3.csv("data/student_regression_pitchtrack.csv", function(error, data) {
+            // d3.csv("data/student_regression_pitchtrack.csv", function(error, data) {
+            d3.csv(pitchtrack_s_default, function(error, data) {
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
@@ -708,7 +732,8 @@
 
             var MIDInote_s;
 
-            d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt", function(error, data) {
+            // d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt", function(error, data) {
+            d3.tsv(noteSeg_s_default, function(error, data) {
                 data.forEach(function(d) {
                     d.startTime = +d.startTime;
                     d.pitch = +d.pitch;
@@ -898,7 +923,8 @@
 		// minPxPerSec: 10
             });
 
-            wavesurfer_s.load('data/weiguojia_section_amateur.wav');
+            // wavesurfer_s.load('data/weiguojia_section_amateur.wav');
+            wavesurfer_s.load(audio_s_default);
 
             // Plot moving playback cursor on pitchtrack
             svg2.append("line")
@@ -953,7 +979,8 @@
             function updateData () {
 		// Update alignment dict
 		var dictS2T_note;
-		d3.tsv("data/amateur2pro.txt", function(error, data) {
+		// d3.tsv("data/amateur2pro.txt", function(error, data) {
+		d3.tsv(noteAlign_S2T_update, function(error, data) {
                     data.forEach(function(d) {
 			d.student = d.student;
 			d.teacher = d.teacher;
@@ -963,7 +990,8 @@
 		});
 
 		var dictT2S_note;
-		d3.tsv("data/pro2amateur.txt", function(error, data) {
+		// d3.tsv("data/pro2amateur.txt", function(error, data) {
+		d3.tsv(noteAlign_T2S_update, function(error, data) {
                     data.forEach(function(d) {
 			// d.student = +d.student;
 			// d.teacher = +d.teacher;
@@ -975,7 +1003,8 @@
 		});
 
 		// Update student pitch track
-		d3.csv("data/teacher_regression_pitchtrack.csv", function(error, data) {
+		// d3.csv("data/teacher_regression_pitchtrack.csv", function(error, data) {
+		d3.csv(pitchtrack_s_update, function(error, data) {
                     data.forEach(function(d) {
 			d.time = +d.time;
 			d.pitch = +d.pitch;
@@ -1048,7 +1077,8 @@
                                              .on("click", mouseclick);
 
 		    // Update audio
-		    wavesurfer_s.load('data/weiguojia_section_pro.wav');
+		    // wavesurfer_s.load('data/weiguojia_section_pro.wav');
+		    wavesurfer_s.load(audio_s_update);
 
 		    wavesurfer_s.unAll();
 
@@ -1084,7 +1114,8 @@
 		    });
 
 		// Update teacher MIDI note plot
-		d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+		// d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+		d3.tsv(noteSeg_t_update, function(error, data) {
                     data.forEach(function(d) {
 			d.startTime = +d.startTime;
 			d.pitch = +d.pitch;
@@ -1275,7 +1306,8 @@
 		});
 
 		// Update student MIDI note plot
-		d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+		// d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
+		d3.tsv(noteSeg_s_update, function(error, data) {
                     data.forEach(function(d) {
 			d.startTime = +d.startTime;
 			d.pitch = +d.pitch;
