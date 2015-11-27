@@ -151,6 +151,15 @@
 		    .style("stroke-dasharray", "1")
 		    .style("display", "none");
 
+		// Create focus point
+		svg1.append("circle")
+		    .attr("id", "focusPoint")
+                    .attr("cx", x_t(0))
+                    .attr("cy", y_t(0))
+                    .attr("r", 3)
+		    .attr("fill", "black")
+		    .style("display", "none");
+
 		// Functions for mouse events
 		var bisectTime = d3.bisector(function(d) { return d.time; }).left;
 
@@ -162,6 +171,7 @@
                         d1 = data[i],                         
                         d = x0 - d0.time > d1.time - x0 ? d1 : d0;
     		    
+		    // Move focus line
                     svg1.select("#focus")                      
             		// .attr("x1", d3.mouse(svg1.select("#focusArea").node())[0])
             		.attr("x1", d3.mouse(this)[0])
@@ -169,6 +179,11 @@
             		.attr("x2", d3.mouse(this)[0])
             		.attr("y2", 0)
             		.attr("fill", "black");
+
+		    // Move focus point
+                    svg1.select("#focusPoint")                      
+            		.attr("cx", d3.mouse(this)[0])
+            		.attr("cy", y_t(d.pitch))
 		    
                     // Show pitch information
                     svg1.select("#info_note")
@@ -202,9 +217,13 @@
 		    .attr("width", width)
 		    .attr("height", height)
 		    .attr("fill", "transparent")
-		    .on("mouseover", function() { svg1.select("#focus").style("display", null); })
+		    .on("mouseover", function() { 
+			                 svg1.select("#focus").style("display", null);
+                                         svg1.select("#focusPoint").style("display", null);
+                                     })
 		    .on("mouseout", function() {
 			                svg1.select("#focus").style("display", "none");
+                                        svg1.select("#focusPoint").style("display", "none");
 			                svg1.select("#info_note").attr("fill", "transparent");
 			                svg1.select("#info_freq").attr("fill", "transparent");
 			                svg1.select("#info_time").attr("fill", "transparent");
@@ -590,6 +609,15 @@
 		    .style("stroke-dasharray", "1")
 		    .style("display", "none");
 
+		// Create focus point
+		svg2.append("circle")
+		    .attr("id", "focusPoint")
+                    .attr("cx", x_t(0))
+                    .attr("cy", y_t(0))
+                    .attr("r", 3)
+		    .attr("fill", "black")
+		    .style("display", "none");
+
 		var bisectTime = d3.bisector(function(d) { return d.time; }).left;
 
 		function mousemove() {                            
@@ -599,12 +627,18 @@
 		    d1 = data[i],                             
 		    d = x0 - d0.time > d1.time - x0 ? d1 : d0;
 
+		    // Move focus line
 		    svg2.select("#focus")                      
 			.attr("x1", d3.mouse(this)[0])
 			.attr("y1", height)
 			.attr("x2", d3.mouse(this)[0])
 			.attr("y2", 0)
 			.attr("fill", "black");
+
+		    // Move focus point
+                    svg2.select("#focusPoint")                      
+            		.attr("cx", d3.mouse(this)[0])
+            		.attr("cy", y_s(d.pitch))
 
 		    // Show pitch information
 		    svg2.select("#info_note")
@@ -639,9 +673,13 @@
 		    .attr("width", width)
 		    .attr("height", height)
 		    .attr("fill", "transparent")
-		    .on("mouseover", function() { svg2.select("#focus").style("display", null); })
+		    .on("mouseover", function() {
+                                         svg2.select("#focus").style("display", null);
+                                         svg2.select("#focusPoint").style("display", null);
+                                     })
 		    .on("mouseout", function() {
 			                svg2.select("#focus").style("display", "none");
+                                        svg2.select("#focusPoint").style("display", "none");
 			                svg2.select("#info_note").attr("fill", "transparent");
 			                svg2.select("#info_freq").attr("fill", "transparent");
 			                svg2.select("#info_time").attr("fill", "transparent");
@@ -967,12 +1005,18 @@
 			d1 = data[i],                             
 			d = x0 - d0.time > d1.time - x0 ? d1 : d0;
 
+			// Move focus line
 			svg2.select("#focus")                      
 			    .attr("x1", d3.mouse(svg2.select("#focusArea").node())[0])
 			    .attr("y1", height)
 			    .attr("x2", d3.mouse(svg2.select("#focusArea").node())[0])
 			    .attr("y2", 0)
 			    .attr("fill", "black");
+
+			// Move focus point
+			svg2.select("#focusPoint")                      
+            		    .attr("cx", d3.mouse(svg2.select("#focusArea").node())[0])
+            		    .attr("cy", y_t(d.pitch))
 
 			// Show pitch information
 			svg2.select("#info_note")
