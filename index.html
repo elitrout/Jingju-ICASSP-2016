@@ -255,7 +255,7 @@
             // Read alignment dict
             var dictS2T_note;
             // d3.tsv("data/amateur2pro.txt", function(error, data) {
-            d3.tsv(noteAlign_S2T_default, function(error, data) {
+            d3.csv(noteAlign_S2T_default, function(error, data) {
                 data.forEach(function(d) {
                     d.student = d.student;
                     d.teacher = d.teacher;
@@ -266,7 +266,7 @@
 
             var dictT2S_note;
             // d3.tsv("data/pro2amateur.txt", function(error, data) {
-            d3.tsv(noteAlign_T2S_default, function(error, data) {
+            d3.csv(noteAlign_T2S_default, function(error, data) {
                 data.forEach(function(d) {
                     d.student = d.student;
                     d.teacher = d.teacher;
@@ -296,7 +296,7 @@
             var MIDInote_t;
 
             // d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
-            d3.tsv(noteSeg_t_default, function(error, data) {
+            d3.csv(noteSeg_t_default, function(error, data) {
                 data.forEach(function(d) {
                     d.startTime = +d.startTime;
                     d.pitch = +d.pitch;
@@ -734,7 +734,7 @@
             var MIDInote_s;
 
             // d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt", function(error, data) {
-            d3.tsv(noteSeg_s_default, function(error, data) {
+            d3.csv(noteSeg_s_default, function(error, data) {
                 data.forEach(function(d) {
                     d.startTime = +d.startTime;
                     d.pitch = +d.pitch;
@@ -981,7 +981,7 @@
 		// Update alignment dict
 		var dictS2T_note;
 		// d3.tsv("data/amateur2pro.txt", function(error, data) {
-		d3.tsv(noteAlign_S2T_update, function(error, data) {
+		d3.csv(noteAlign_S2T_update, function(error, data) {
                     data.forEach(function(d) {
 			d.student = d.student;
 			d.teacher = d.teacher;
@@ -992,7 +992,7 @@
 
 		var dictT2S_note;
 		// d3.tsv("data/pro2amateur.txt", function(error, data) {
-		d3.tsv(noteAlign_T2S_update, function(error, data) {
+		d3.csv(noteAlign_T2S_update, function(error, data) {
                     data.forEach(function(d) {
 			// d.student = +d.student;
 			// d.teacher = +d.teacher;
@@ -1116,7 +1116,7 @@
 
 		// Update teacher MIDI note plot
 		// d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
-		d3.tsv(noteSeg_t_update, function(error, data) {
+		d3.csv(noteSeg_t_update, function(error, data) {
                     data.forEach(function(d) {
 			d.startTime = +d.startTime;
 			d.pitch = +d.pitch;
@@ -1308,7 +1308,7 @@
 
 		// Update student MIDI note plot
 		// d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
-		d3.tsv(noteSeg_s_update, function(error, data) {
+		d3.csv(noteSeg_s_update, function(error, data) {
                     data.forEach(function(d) {
 			d.startTime = +d.startTime;
 			d.pitch = +d.pitch;
