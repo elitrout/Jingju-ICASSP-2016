@@ -97,8 +97,11 @@
                     }).done(function(data) {
                         console.log("Got the callback!!");
                         seg_info = data;
-                		// playBackWithDelay();
-                		console.log(seg_info);
+                	// playBackWithDelay();
+                	console.log(seg_info);
+
+                        // Update data visualization
+		        updateData();
                     });
                     //console.log(e.slice(0));
 		    //Recorder.forceDownload(e, "filename.wav");
@@ -127,9 +130,6 @@
 
                         // Update recordingInfo
                         document.getElementById("recordingInfo").innerHTML = "Recording finished. Click and hold to record again.";
-
-                        // Update data visualization
-		        updateData();
 		};
 	});
 
