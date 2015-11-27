@@ -878,10 +878,11 @@
 		    MIDInote_t = data;
 		    
 		    // Plot new notes
-	    	    var MIDInotes = svg1.selectAll("rect")
+	    	    var MIDInotes = svg1.selectAll("rect.note")    // Have to specify a class to exclude focus area
                         .data(data)
                         .enter()
-                        .append("rect");
+                        .append("rect")
+                        .attr("class", "note");
 
 		    var MIDInoteOffset = 4;    // The vertical center of the note rect is aligned to the pitch
 	    	    MIDInotes.attr("x", function(d) {return x_t(d.startTime);})
@@ -890,7 +891,7 @@
 	    	        .attr("height", 8)
 		        .attr("fill", "DarkCyan")
 		        .attr("opacity", 0.7)
-		        .attr("id", function(d, i){var noteid = 't'+ (i-1); return noteid; })    // Note ID for alignment visualization
+		        .attr("id", function(d, i){var noteid = 't'+i; return noteid; })    // Note ID for alignment visualization
 		        .on("mouseover", function(d, i) {
 			    // Hide focus line
 			    svg1.select("#focus").style("display", "none");
@@ -899,9 +900,9 @@
 			    // Draw note boundary
 			    var note_t = d.pitch
 			    var noteStart_t = Number(d3.select(this).attr("x"));
-			    var noteStartTime_t = MIDInote_t[i-1].startTime;
+			    var noteStartTime_t = MIDInote_t[i].startTime;
 			    var noteDuration_t = Number(d3.select(this).attr("width"));
-			    var noteDurationTime_t = MIDInote_t[i-1].duration;
+			    var noteDurationTime_t = MIDInote_t[i].duration;
 			    var noteEnd_t = noteStart_t + noteDuration_t;
 			    var noteEndTime_t = noteStartTime_t + noteDurationTime_t;
 
@@ -934,8 +935,15 @@
 				.text("Time: " + noteStartTime_t.toFixed(2) + ' - ' + (Number(noteStartTime_t.toFixed(2)) + Number(noteDurationTime_t.toFixed(2))).toFixed(2) + 's (' + noteDurationTime_t.toFixed(2) + 's)');
 
 			    // Act on the aligned note from student
-                            var pair_s = dictT2S_note[i-1].student.split(" ");
+                            var pair_s = dictT2S_note[i].student.split(" ");
 			    numPairNotes = pair_s.length;
+
+			    // In case of multiple notes, print group boundary time
+			    var noteInfoText = "",
+			        freqInfoText = "",
+			        groupTimeBoundaryL,
+			        groupTimeBoundaryR,
+			        groupTimeDuration;
 
                             for (n = 0; n < numPairNotes; n++) {
 
@@ -965,15 +973,39 @@
                                 .attr("y2", 0)
                                 .style("stroke", "grey")
                                 .style("stroke-dasharray", "3");
+
+                            // Plot note info
+                            if (numPairNotes == 1) {
+				noteInfoText = note_s.toFixed(1);
+				freqInfoText = note_s.toFixed(1);
+				groupTimeBoundaryL = noteStartTime_s.toFixed(2);
+				groupTimeDuration = noteDurationTime_s.toFixed(2);
+				groupTimeBoundaryR = groupTimeBoundaryL + groupTimeDuration;
+			    } else {  // More than 1 note
+				if (n == 0) {
+				    noteInfoText = note_s.toFixed(1);
+				    freqInfoText = note_s.toFixed(1);
+				    groupTimeBoundaryL = noteStartTime_s.toFixed(2);
+				} else {
+				    noteInfoText = noteInfoText + "\u00A0\u00A0" + note_s.toFixed(1);
+				    freqInfoText = freqInfoText + "\u00A0\u00A0" + note_s.toFixed(1);
+				    if (n == numPairNotes - 1) {
+					groupTimeBoundaryR = (Number(noteStartTime_s.toFixed(2)) + Number(noteDurationTime_s.toFixed(2))).toFixed(2);
+					groupTimeDuration = (groupTimeBoundaryR - groupTimeBoundaryL).toFixed(2);
+				    }
+				}
+			    }
+
                             svg2.select("#info_note")
                                 .attr("fill", "grey")
-                                .text("Note: " + note_s + "Attention: multiple notes");
+                                .text("Note: " + noteInfoText);
                             svg2.select("#info_freq")
                                 .attr("fill", "grey")
-                                .text("Freq: " + note_s);
+                                .text("Freq: " + freqInfoText);
                             svg2.select("#info_time")
                                 .attr("fill", "grey")
-                                .text("Time: " + noteStartTime_s.toFixed(2) + ' - ' + (Number(noteStartTime_s.toFixed(2)) + Number(noteDurationTime_s.toFixed(2))).toFixed(2) + 's (' + noteDurationTime_s.toFixed(2) + 's)');
+                                .text("Time: " + groupTimeBoundaryL + ' - ' + groupTimeBoundaryR + 's (' + groupTimeDuration + 's)');
+
 			    }
 			})
 		        .on("mouseout", function(d, i) {
@@ -993,7 +1025,7 @@
 			    svg1.select("#info_time").attr("fill", "transparent");
 
 			    // Act on the aligned note from student
-                            var pair_s = dictT2S_note[i-1].student.split(" ");
+                            var pair_s = dictT2S_note[i].student.split(" ");
 			    numPairNotes = pair_s.length;
 
                             for (n = 0; n < numPairNotes; n++) {
@@ -1030,17 +1062,18 @@
 
 		    // Remove precious notes
 		    for (i = 0; i < MIDInote_s.length; ++i) {
-			svg2.select("#t"+i).remove();
+			svg2.select("#s"+i).remove();
 		    }
 
 		    // Update with new data
 		    MIDInote_s = data;
 		    
 		    // Plot new notes
-	    	    var MIDInotes = svg2.selectAll("rect")
+	    	    var MIDInotes = svg2.selectAll("rect.note")
                         .data(data)
                         .enter()
-                        .append("rect");
+                        .append("rect")
+                        .attr("class", "note");
 
 		    var MIDInoteOffset = 4;    // The vertical center of the note rect is aligned to the pitch
 
@@ -1050,7 +1083,7 @@
    	                .attr("height", 8)
         	        .attr("fill", "DarkCyan")
 		        .attr("opacity", 0.7)
-		        .attr("id", function(d, i){var noteid = 's'+(i-1); return noteid; })    // Note ID for alignment visualization
+		        .attr("id", function(d, i){var noteid = 's'+i; return noteid; })    // Note ID for alignment visualization
 		        .on("mouseover", function(d, i) {
 			    // Hide focus line
 			    svg1.select("#focus").style("display", "none");
@@ -1059,9 +1092,9 @@
 			    // Draw note boundary
 			    var note_s = d.pitch
 			    var noteStart_s = Number(d3.select(this).attr("x"));
-			    var noteStartTime_s = MIDInote_s[i-1].startTime;
+			    var noteStartTime_s = MIDInote_s[i].startTime;
 			    var noteDuration_s = Number(d3.select(this).attr("width"));
-			    var noteDurationTime_s = MIDInote_s[i-1].duration;
+			    var noteDurationTime_s = MIDInote_s[i].duration;
 			    var noteEnd_s = noteStart_s + noteDuration_s;
 			    var noteEndTime_s = noteStartTime_s + noteDurationTime_s;
 
@@ -1096,8 +1129,15 @@
 
 
 			    // Act on the aligned note from student
-                            var pair_t = dictS2T_note[i-1].teacher.split(" ");
+                            var pair_t = dictS2T_note[i].teacher.split(" ");
 			    numPairNotes = pair_t.length;
+
+			    // In case of multiple notes, print group boundary time
+			    var noteInfoText = "",
+			        freqInfoText = "",
+			        groupTimeBoundaryL,
+			        groupTimeBoundaryR,
+			        groupTimeDuration;
 
                             for (n = 0; n < numPairNotes; n++) {
 
@@ -1128,15 +1168,37 @@
 				    .style("stroke", "grey")
 				    .style("stroke-dasharray", "3");
 
+				// Plot note info
+				if (numPairNotes == 1) {
+				    noteInfoText = note_s.toFixed(1);
+				    freqInfoText = note_s.toFixed(1);
+				    groupTimeBoundaryL = noteStartTime_t.toFixed(2);
+				    groupTimeDuration = noteDurationTime_t.toFixed(2);
+				    groupTimeBoundaryR = groupTimeBoundaryL + groupTimeDuration;
+				} else {  // More than 1 note
+				    if (n == 0) {
+					noteInfoText = note_t.toFixed(1);
+					freqInfoText = note_t.toFixed(1);
+					groupTimeBoundaryL = noteStartTime_t.toFixed(2);
+				    } else {
+					noteInfoText = noteInfoText + "\u00A0\u00A0" + note_t.toFixed(1);
+					freqInfoText = freqInfoText + "\u00A0\u00A0" + note_t.toFixed(1);
+					if (n == numPairNotes - 1) {
+					    groupTimeBoundaryR = (Number(noteStartTime_t.toFixed(2)) + Number(noteDurationTime_t.toFixed(2))).toFixed(2);
+					    groupTimeDuration = (groupTimeBoundaryR - groupTimeBoundaryL).toFixed(2);
+					}
+				    }
+				}
+
 				svg1.select("#info_note")
-			            .attr("fill", "grey")
-				    .text("Note: " + note_t);
+                                    .attr("fill", "grey")
+                                    .text("Note: " + noteInfoText);
 				svg1.select("#info_freq")
-			            .attr("fill", "grey")
-				    .text("Freq: " + note_t);
+                                    .attr("fill", "grey")
+                                    .text("Freq: " + freqInfoText);
 				svg1.select("#info_time")
-			            .attr("fill", "grey")
-				    .text("Time: " + noteStartTime_t.toFixed(2) + ' - ' + (Number(noteStartTime_t.toFixed(2)) + Number(noteDurationTime_t.toFixed(2))).toFixed(2) + 's (' + noteDurationTime_t.toFixed(2) + 's)');
+                                    .attr("fill", "grey")
+                                    .text("Time: " + groupTimeBoundaryL + ' - ' + groupTimeBoundaryR + 's (' + groupTimeDuration + 's)');
 			    }
 			})
 		        .on("mouseout", function(d, i) {
@@ -1151,7 +1213,7 @@
 			    svg2.select("#info_time").attr("fill", "transparent");
 
 			    // Act on the aligned note from student
-                            var pair_t = dictS2T_note[i-1].teacher.split(" ");
+                            var pair_t = dictS2T_note[i].teacher.split(" ");
 			    numPairNotes = pair_t.length;
 
                             for (n = 0; n < numPairNotes; n++) {
