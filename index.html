@@ -269,6 +269,8 @@
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
 
+				    svg1.select("#focusPoint").moveToFront();
+
 				    // Plot aligned segment
 				    var pairSeg_s = pitchSegAlign_T2S[j].student.split(" ");
 
@@ -286,6 +288,9 @@
 					.attr("stroke", "Cyan")
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
+
+				    // Show focus point on top
+				    svg2.select("#focusPoint").moveToFront();
 				}
 
                                 break;
@@ -801,6 +806,8 @@
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
 
+				    svg2.select("#focusPoint").moveToFront();
+
 				    // Plot aligned segment
 				    var pairSeg_t = pitchSegAlign_S2T[j].teacher.split(" ");
 
@@ -818,6 +825,9 @@
 					.attr("stroke", "Cyan")
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
+
+				    // Show focus point on top
+				    svg1.select("#focusPoint").moveToFront();
 				}
 
                                 break;
@@ -1274,6 +1284,8 @@
             				    .attr("stroke-width", 2)
             				    .attr("fill", "none");
 
+					svg1.select("#focusPoint").moveToFront();
+
 					// Plot aligned segment
 					var pairSeg_s = pitchSegAlign_T2S[j].student.split(" ");
 
@@ -1291,6 +1303,9 @@
 					    .attr("stroke", "Cyan")
 					    .attr("stroke-width", 2)
 					    .attr("fill", "none");
+
+					// Show focus point on top
+					svg2.select("#focusPoint").moveToFront();
             			    }
 				    
                                     break;
@@ -1396,6 +1411,8 @@
 					    .attr("stroke-width", 2)
 					    .attr("fill", "none");
 
+					svg2.select("#focusPoint").moveToFront();
+
 					// Plot aligned segment
 					var pairSeg_t = pitchSegAlign_S2T[j].teacher.split(" ");
 
@@ -1413,6 +1430,9 @@
 					    .attr("stroke", "Cyan")
 					    .attr("stroke-width", 2)
 					    .attr("fill", "none");
+
+					// Show focus point on top
+					svg1.select("#focusPoint").moveToFront();
 				    }
 
                                     break;
@@ -1858,6 +1878,13 @@
 
 		// });
 	    }
+
+            // Function to move element on top
+            d3.selection.prototype.moveToFront = function() {
+                return this.each(function(){
+            	this.parentNode.appendChild(this);
+                });
+            };
 
         </script>
     </body>
