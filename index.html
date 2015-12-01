@@ -235,7 +235,7 @@
                     svg1.select("#focusPoint")                      
             		.attr("cx", d3.mouse(this)[0])
             		.attr("cy", y_t(d.pitch))
-		    
+
                     // Show pitch information
                     svg1.select("#info_note")
             		.attr("fill", "grey")
@@ -262,7 +262,7 @@
 					.attr("d", pitchtrack1(data.filter(function(d) {
 					    return d.time >= pitchSeg_t[j].startTime && d.time <= pitchSeg_t[j].endTime;
 					})))
-					.attr("stroke", "DarkBlue")
+					.attr("stroke", "Cyan")
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
 				}
@@ -564,7 +564,7 @@
             var wavesurfer_t = WaveSurfer.create({
                 container: '#wave1',
                 waveColor: 'grey',
-                progressColor: 'DarkTurquoise',
+                progressColor: 'SteelBlue',
 		fillParent: true,
 		height: 30
 		// minPxPerSec: 10
@@ -772,7 +772,7 @@
 					.attr("d", pitchtrack2(data.filter(function(d) {
 					    return d.time >= pitchSeg_s[j].startTime && d.time <= pitchSeg_s[j].endTime;
 					})))
-					.attr("stroke", "DarkBlue")
+					.attr("stroke", "Cyan")
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
 				}
@@ -1036,7 +1036,7 @@
             var wavesurfer_s = WaveSurfer.create({
                 container: '#wave2',
                 waveColor: 'grey',
-                progressColor: 'DarkTurquoise',
+                progressColor: 'SteelBlue',
 		fillParent: true,
 		height: 30
 		// minPxPerSec: 10
@@ -1223,7 +1223,7 @@
             				    .attr("d", pitchtrack1(data.filter(function(d) {
             					return d.time >= pitchSeg_t[j].startTime && d.time <= pitchSeg_t[j].endTime;
             				    })))
-            				    .attr("stroke", "DarkBlue")
+            				    .attr("stroke", "Cyan")
             				    .attr("stroke-width", 2)
             				    .attr("fill", "none");
             			    }
@@ -1323,7 +1323,7 @@
 					    .attr("d", pitchtrack2(data.filter(function(d) {
 						return d.time >= pitchSeg_s[j].startTime && d.time <= pitchSeg_s[j].endTime;
 					    })))
-					    .attr("stroke", "DarkBlue")
+					    .attr("stroke", "Cyan")
 					    .attr("stroke-width", 2)
 					    .attr("fill", "none");
 				    }
