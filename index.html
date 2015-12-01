@@ -4,11 +4,13 @@
     <style>
         body { font: 12px Arial;}
         
+/*        
         path { 
             stroke: PaleVioletRed;
             stroke-width: 2;
             fill: none;
         }
+*/
         
         .axis path,
         .axis line {
@@ -30,7 +32,8 @@
     </div>
     <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:1px solid lightgrey;"></div>
     <div ng-controller="RecordController as rec" id="control3" style="position:relative; top:55px; left:0px; margin:0 auto;">
-    <button id="recordButton" ng-mousedown="rec.startRecording()" ng-mouseup="rec.stopRecording()" ng-class="{'btn-danger': rec.isRecording(), btn: true}">
+    <!-- <button id="recordButton" ng-mousedown="rec.startRecording()" ng-mouseup="rec.stopRecording()" ng-class="{'btn-danger': rec.isRecording(), btn: true}"> -->
+    <button id="recordButton" onclick="updateData()">
     <b>Click and hold to record!</b>
     </button>
     <b><span id="recordingInfo" style="font-size:14px"> Ready to record.</span></b>
@@ -49,23 +52,6 @@
 
     <body ng-controller="SJController as sj">
         <script type="text/javascript">
-            // // Data file address
-            // var pitchtrack_t_default = "data/teacher_regression_pitchtrack.csv",
-            //     pitchtrack_s_default = "data/student_regression_pitchtrack.csv",
-            //     noteSeg_t_default = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt",
-            //     noteSeg_s_default = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt",
-            //     noteAlign_S2T_default = "data/amateur2pro.txt",
-            //     noteAlign_T2S_default = "data/pro2amateur.txt",
-            //     audio_t_default = "data/weiguojia_section_pro.wav",
-            //     audio_s_default = "data/weiguojia_section_amateur.wav",
-            //     pitchtrack_t_update,
-            //     pitchtrack_s_update = "data/teacher_regression_pitchtrack.csv",
-            //     noteSeg_t_update = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt",
-            //     noteSeg_s_update = "data/pitchtracknotetranscriptionsegmentation/weiguojia_section_amateur_monoNoteOut_midi.txt",
-            //     noteAlign_S2T_update = "data/amateur2pro.txt",
-            //     noteAlign_T2S_update = "data/pro2amateur.txt",
-            //     audio_t_update,
-            //     audio_s_update = "data/weiguojia_section_pro.wav";
 
             // Set the dimensions of the canvas / graph
             var margin = {top: 50, right: 20, bottom: 40, left: 50},
@@ -122,6 +108,45 @@
                .style("font-weight","bold")
                .text("Teacher");
 
+            // Read pitch segmentation info
+            var pitchSeg_t, pitchSeg_s, pitchSegAlign_T2S, pitchSegAlign_S2T;
+            
+            d3.csv(pitchSeg_t_default, function(error, data) {
+            	data.forEach(function(d) {
+            	    d.startTime = +d.startTime;
+            	    d.endTime = +d.endTime;
+            	});
+            
+            	setTimeout(function() {pitchSeg_t = data;}, 50);
+            });
+            
+            d3.csv(pitchSeg_s_default, function(error, data) {
+                data.forEach(function(d) {
+            	    d.startTime = +d.startTime;
+            	    d.endTime = +d.endTime;
+                });
+            
+            	setTimeout(function() {pitchSeg_s = data;}, 50);
+            });
+            
+            d3.csv(pitchSegAlign_T2S_default, function(error, data) {
+                data.forEach(function(d) {
+            	    d.startTime = +d.startTime;
+            	    d.endTime = +d.endTime;
+                });
+            
+            	setTimeout(function() {pitchSegAlign_T2S = data;}, 50);
+            });
+            
+            d3.csv(pitchSegAlign_S2T_default, function(error, data) {
+                data.forEach(function(d) {
+            	    d.startTime = +d.startTime;
+            	    d.endTime = +d.endTime;
+                });
+            
+            	setTimeout(function() {pitchSegAlign_S2T = data;}, 50);
+            });
+
             // Define the line
             var pitchtrack1 = d3.svg.line()
                 // .defined(function(d) { return !isNaN(d.pitch); })    // Don't plot silence (pitch value set to NaN)
@@ -146,8 +171,11 @@
                 // Add the pitchtrack path.
                 svg1.append("path")
                     .attr("class", "line")
-                    .attr("d", pitchtrack1(data));
-            
+                    .attr("d", pitchtrack1(data))
+                    .attr("stroke", "PaleVioletRed")
+                    .attr("stroke-width", 2)
+                    .attr("fill", "none");
+
                 // Add the X Axis
                 svg1.append("g")
                     .attr("class", "x axis")
@@ -183,6 +211,9 @@
 		// Functions for mouse events
 		var bisectTime = d3.bisector(function(d) { return d.time; }).left;
 
+		// Initialize current segment flag
+		var curSeg = -1;
+
 		function mousemove() {                            
                     // var x0 = x_t.invert(d3.mouse(svg1.select("#focusArea").node())[0]),
                     var x0 = x_t.invert(d3.mouse(this)[0]),
@@ -215,6 +246,32 @@
                     svg1.select("#info_time")
             		.attr("fill", "grey")
             		.text("Time: " + d.time.toFixed(2) + 's');
+
+		    // Detect and plot pitch segment
+		    if (x0 >= pitchSeg_t[0].startTime && x0 <= pitchSeg_t[pitchSeg_t.length - 1].endTime) {
+			for (j = 0; j < pitchSeg_t.length; j++) {
+			    if (x0 >= pitchSeg_t[j].startTime && x0 <= pitchSeg_t[j].endTime) {
+                                if (j != curSeg) {
+				    // If seg changes, remove precious one and plot a new one
+				    svg1.select("#currentSeg").remove();
+				    curSeg = j;
+
+				    var currentSeg_t = svg1.append("path")
+				    // svg1.append("path")
+					.attr("id", "currentSeg")
+					.attr("d", pitchtrack1(data.filter(function(d) {
+					    return d.time >= pitchSeg_t[j].startTime && d.time <= pitchSeg_t[j].endTime;
+					})))
+					.attr("stroke", "DarkBlue")
+					.attr("stroke-width", 2)
+					.attr("fill", "none");
+				}
+
+                                break;
+			    }
+			}
+		    }
+
 		}
 		
 		// Navigate audio
@@ -247,6 +304,8 @@
 			                svg1.select("#info_note").attr("fill", "transparent");
 			                svg1.select("#info_freq").attr("fill", "transparent");
 			                svg1.select("#info_time").attr("fill", "transparent");
+			                svg1.select("#currentSeg").remove();
+                                        curSeg = -1;
 		                    })
 		    .on("mousemove", mousemove)
 		    .on("click", mouseclick);
@@ -625,6 +684,9 @@
 		    .attr("id", "path_s")
                     .attr("class", "line")
                     .attr("d", pitchtrack2(data))
+                    .attr("stroke", "PaleVioletRed")
+                    .attr("stroke-width", 2)
+                    .attr("fill", "none")
 		    .style("pointer-events", "none");    // Prevent mouseover failing on overlapping part
             
                 // Add the X Axis
@@ -661,6 +723,9 @@
 
 		var bisectTime = d3.bisector(function(d) { return d.time; }).left;
 
+                // Initialize current segment flag
+                var curSeg = -1;
+
 		function mousemove() {                            
 		    var x0 = x_s.invert(d3.mouse(this)[0]),         
 		    i = bisectTime(data, x0, 1),              
@@ -691,6 +756,32 @@
 		    svg2.select("#info_time")
 			.attr("fill", "grey")
 		        .text("Time: " + d.time.toFixed(2) + 's');
+
+		    // Detect and plot pitch segment
+		    if (x0 >= pitchSeg_s[0].startTime && x0 <= pitchSeg_s[pitchSeg_s.length - 1].endTime) {
+			for (j = 0; j < pitchSeg_s.length; j++) {
+			    if (x0 >= pitchSeg_s[j].startTime && x0 <= pitchSeg_s[j].endTime) {
+                                if (j != curSeg) {
+				    // If seg changes, remove precious one and plot a new one
+				    svg2.select("#currentSeg").remove();
+				    curSeg = j;
+
+				    var currentSeg_t = svg2.append("path")
+				    // svg2.append("path")
+					.attr("id", "currentSeg")
+					.attr("d", pitchtrack2(data.filter(function(d) {
+					    return d.time >= pitchSeg_s[j].startTime && d.time <= pitchSeg_s[j].endTime;
+					})))
+					.attr("stroke", "DarkBlue")
+					.attr("stroke-width", 2)
+					.attr("fill", "none");
+				}
+
+                                break;
+			    }
+			}
+		    }
+
 		}
 
 		// Navigate audio
@@ -724,6 +815,8 @@
 			                svg2.select("#info_note").attr("fill", "transparent");
 			                svg2.select("#info_freq").attr("fill", "transparent");
 			                svg2.select("#info_time").attr("fill", "transparent");
+                                        svg2.select("#currentSeg").remove();
+                                        curSeg = -1;
 		                    })
 		    .on("mousemove", mousemove)
 		    .on("click", mouseclick);
@@ -1001,7 +1094,9 @@
 		}
 	    }
 
-            // Update visualization when finish recording
+///////////////////////////////////////////////////
+///// Update visualization with new data
+///////////////////////////////////////////////////
             function updateData () {
 		// Update alignment dict
 		var dictS2T_note;
@@ -1028,8 +1123,134 @@
 		    dictT2S_note = data;
 		});
 
+                // Read pitch segmentation info
+                d3.csv(pitchSeg_t_update, function(error, data) {
+                    data.forEach(function(d) {
+                	    d.startTime = +d.startTime;
+                	    d.endTime = +d.endTime;
+                    });
+            
+                    setTimeout(function() {pitchSeg_t = data;}, 50);
+                });
+            
+                d3.csv(pitchSeg_s_update, function(error, data) {
+                    data.forEach(function(d) {
+                	    d.startTime = +d.startTime;
+                	    d.endTime = +d.endTime;
+                    });
+            
+                    setTimeout(function() {pitchSeg_s = data;}, 50);
+                });
+            
+                d3.csv(pitchSegAlign_T2S_update, function(error, data) {
+                    data.forEach(function(d) {
+                	    d.startTime = +d.startTime;
+                	    d.endTime = +d.endTime;
+                    });
+            
+                    setTimeout(function() {pitchSegAlign_T2S = data;}, 50);
+                });
+            
+                d3.csv(pitchSegAlign_S2T_update, function(error, data) {
+                    data.forEach(function(d) {
+                	    d.startTime = +d.startTime;
+                	    d.endTime = +d.endTime;
+                    });
+            
+                    setTimeout(function() {pitchSegAlign_S2T = data;}, 50);
+                });
+
+                // Update teacher pitch track
+                d3.csv(pitchtrack_t_update, function(error, data) {
+                    data.forEach(function(d) {
+                        d.time = +d.time;
+                        d.pitch = +d.pitch;
+                    });
+                    
+                    // Rescale the range of the data
+                    x_t.domain([0, d3.max(data, function(d) { return d.time; })]);
+                    y_t.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]);
+            
+            	    // Functions for mouse events
+            	    var bisectTime = d3.bisector(function(d) { return d.time; }).left;
+		    
+            	    // Initialize current segment flag
+            	    var curSeg = -1;
+		    
+            	    function mousemove() {                            
+                        var x0 = x_t.invert(d3.mouse(this)[0]),
+                        i = bisectTime(data, x0, 1),             
+                        d0 = data[i - 1],              
+                        d1 = data[i],                         
+                        d = x0 - d0.time > d1.time - x0 ? d1 : d0;
+                	
+            		// Move focus line
+                        svg1.select("#focus")                      
+                            .attr("x1", d3.mouse(this)[0])
+                            .attr("y1", height)
+                            .attr("x2", d3.mouse(this)[0])
+                            .attr("y2", 0)
+                            .attr("fill", "black");
+			
+            		// Move focus point
+                        svg1.select("#focusPoint")                      
+                            .attr("cx", d3.mouse(this)[0])
+                            .attr("cy", y_t(d.pitch))
+            		
+                        // Show pitch information
+                        svg1.select("#info_note")
+                            .attr("fill", "grey")
+                            .text("Note: " + d.pitch.toFixed(1));
+                        svg1.select("#info_freq")
+                            .attr("fill", "grey")
+                            .text("Freq: " + d.pitch.toFixed(2));
+                        svg1.select("#info_time")
+                            .attr("fill", "grey")
+                            .text("Time: " + d.time.toFixed(2) + 's');
+			
+            		// Detect and plot pitch segment
+            		if (x0 >= pitchSeg_t[0].startTime && x0 <= pitchSeg_t[pitchSeg_t.length - 1].endTime) {
+            		    for (j = 0; j < pitchSeg_t.length; j++) {
+            			if (x0 >= pitchSeg_t[j].startTime && x0 <= pitchSeg_t[j].endTime) {
+                                    if (j != curSeg) {
+            				// If seg changes, remove precious one and plot a new one
+            				svg1.select("#currentSeg").remove();
+            				curSeg = j;
+					
+            				var currentSeg_t = svg1.append("path")
+            				// svg1.append("path")
+            				    .attr("id", "currentSeg")
+            				    .attr("d", pitchtrack1(data.filter(function(d) {
+            					return d.time >= pitchSeg_t[j].startTime && d.time <= pitchSeg_t[j].endTime;
+            				    })))
+            				    .attr("stroke", "DarkBlue")
+            				    .attr("stroke-width", 2)
+            				    .attr("fill", "none");
+            			    }
+				    
+                                    break;
+            			}
+            		    }
+            		}
+			
+            	    }
+            	
+            	    // Update mousemove and mouseout function
+            	    svg1.select("#focusArea")
+            		.on("mouseout", function() {
+            		    svg1.select("#focus").style("display", "none");
+                            svg1.select("#focusPoint").style("display", "none");
+            		    svg1.select("#info_note").attr("fill", "transparent");
+            		    svg1.select("#info_freq").attr("fill", "transparent");
+            		    svg1.select("#info_time").attr("fill", "transparent");
+            		    svg1.select("#currentSeg").remove();
+                            curSeg = -1;
+            		})
+            		.on("mousemove", mousemove);
+                });
+
+
 		// Update student pitch track
-		// d3.csv("data/teacher_regression_pitchtrack.csv", function(error, data) {
 		d3.csv(pitchtrack_s_update, function(error, data) {
                     data.forEach(function(d) {
 			d.time = +d.time;
@@ -1053,6 +1274,9 @@
 
 		    var bisectTime = d3.bisector(function(d) { return d.time; }).left;
 
+            	    // Initialize current segment flag
+            	    var curSeg = -1;
+
 		    function mousemove() {                            
 			var x0 = x_s.invert(d3.mouse(svg2.select("#focusArea").node())[0]),         
 			i = bisectTime(data, x0, 1),              
@@ -1071,7 +1295,7 @@
 			// Move focus point
 			svg2.select("#focusPoint")                      
             		    .attr("cx", d3.mouse(svg2.select("#focusArea").node())[0])
-            		    .attr("cy", y_t(d.pitch))
+            		    .attr("cy", y_s(d.pitch))
 
 			// Show pitch information
 			svg2.select("#info_note")
@@ -1083,6 +1307,32 @@
 			svg2.select("#info_time")
 			    .attr("fill", "grey")
 		            .text("Time: " + d.time.toFixed(2) + 's');
+
+			// Detect and plot pitch segment
+			if (x0 >= pitchSeg_s[0].startTime && x0 <= pitchSeg_s[pitchSeg_s.length - 1].endTime) {
+			    for (j = 0; j < pitchSeg_s.length; j++) {
+				if (x0 >= pitchSeg_s[j].startTime && x0 <= pitchSeg_s[j].endTime) {
+                                    if (j != curSeg) {
+					// If seg changes, remove precious one and plot a new one
+					svg2.select("#currentSeg").remove();
+					curSeg = j;
+
+					var currentSeg_t = svg2.append("path")
+					// svg2.append("path")
+					    .attr("id", "currentSeg")
+					    .attr("d", pitchtrack2(data.filter(function(d) {
+						return d.time >= pitchSeg_s[j].startTime && d.time <= pitchSeg_s[j].endTime;
+					    })))
+					    .attr("stroke", "DarkBlue")
+					    .attr("stroke-width", 2)
+					    .attr("fill", "none");
+				    }
+
+                                    break;
+				}
+			    }
+			}
+
 		    }
 
 		    // Navigate audio
@@ -1102,42 +1352,44 @@
 		    svg2.select("#focusArea").on("mousemove", mousemove)
                                              .on("click", mouseclick);
 
-		    // Update audio
-		    // wavesurfer_s.load('data/weiguojia_section_pro.wav');
-		    wavesurfer_s.load(audio_s_update);
+		});
 
-		    wavesurfer_s.unAll();
+		// Update audio
+		// wavesurfer_s.load('data/weiguojia_section_pro.wav');
+		wavesurfer_s.load(audio_s_update);
 
-		    wavesurfer_s.on('audioprocess', function () {
-			currentTime = wavesurfer_s.getCurrentTime();
-			d3.select("#playbackPointer_s")
-			    .attr("x1", x_s(currentTime))
-			    .attr("y1", height)
-			    .attr("x2", x_s(currentTime))
-			    .attr("y2", 0)
-			    .style("stroke", "black");
-		    });
+		wavesurfer_s.unAll();
 
-		    wavesurfer_s.on('finish', function () {
-			d3.select("#playbackPointer_s")
-			    .attr("x1", x_s(0))
-			    .attr("y1", height)
-			    .attr("x2", x_s(0))
-			    .attr("y2", 0)
-			    .style("stroke", "black");
+		wavesurfer_s.on('audioprocess', function () {
+		    currentTime = wavesurfer_s.getCurrentTime();
+		    d3.select("#playbackPointer_s")
+			.attr("x1", x_s(currentTime))
+			.attr("y1", height)
+			.attr("x2", x_s(currentTime))
+			.attr("y2", 0)
+			.style("stroke", "black");
+		});
 
-			document.getElementById("playButton_t").innerHTML = "Play";
-		    });
+		wavesurfer_s.on('finish', function () {
+		    d3.select("#playbackPointer_s")
+			.attr("x1", x_s(0))
+			.attr("y1", height)
+			.attr("x2", x_s(0))
+			.attr("y2", 0)
+			.style("stroke", "black");
 
-		    wavesurfer_s.on('seek', function () {
-			currentTime = wavesurfer_s.getCurrentTime();
-			d3.select("#playbackPointer_s")
-			    .attr("x1", x_s(currentTime))
-			    .attr("y1", height)
-			    .attr("x2", x_s(currentTime))
-			    .attr("y2", 0)
-			    .style("stroke", "black");
-		    });
+		    document.getElementById("playButton_t").innerHTML = "Play";
+		});
+
+		wavesurfer_s.on('seek', function () {
+		    currentTime = wavesurfer_s.getCurrentTime();
+		    d3.select("#playbackPointer_s")
+			.attr("x1", x_s(currentTime))
+			.attr("y1", height)
+			.attr("x2", x_s(currentTime))
+			.attr("y2", 0)
+			.style("stroke", "black");
+		});
 
 		// Update teacher MIDI note plot
 		// d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
@@ -1516,7 +1768,7 @@
 			});
 		});
 
-		})
+		// });
 	    }
 
         </script>
