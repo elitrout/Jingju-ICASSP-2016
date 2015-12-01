@@ -109,7 +109,7 @@
                .text("Teacher");
 
             // Read pitch segmentation info
-            var pitchSeg_t, pitchSeg_s, pitchSegAlign_T2S, pitchSegAlign_S2T;
+            var pitchSeg_t, pitchSeg_s, pitchSegAlign_T2S, pitchSegAlign_S2T, pitchtrackData_t, pitchtrackData_s;
             
             d3.csv(pitchSeg_t_default, function(error, data) {
             	data.forEach(function(d) {
@@ -161,6 +161,8 @@
                     d.time = +d.time;
                     d.pitch = +d.pitch;
                 });
+
+		pitchtrackData_t = data;
             
                 // Scale the range of the data
                 // x_t.domain([0, d3.max(data, function(d) { return d.time; })]).nice();
@@ -254,14 +256,33 @@
                                 if (j != curSeg) {
 				    // If seg changes, remove precious one and plot a new one
 				    svg1.select("#currentSeg").remove();
+				    svg2.select("#currentSeg").remove();
 				    curSeg = j;
 
 				    var currentSeg_t = svg1.append("path")
 				    // svg1.append("path")
 					.attr("id", "currentSeg")
-					.attr("d", pitchtrack1(data.filter(function(d) {
-					    return d.time >= pitchSeg_t[j].startTime && d.time <= pitchSeg_t[j].endTime;
+					.attr("d", pitchtrack1(data.filter(function(s) {
+					    return s.time >= pitchSeg_t[j].startTime && s.time <= pitchSeg_t[j].endTime;
 					})))
+					.attr("stroke", "Cyan")
+					.attr("stroke-width", 2)
+					.attr("fill", "none");
+
+				    // Plot aligned segment
+				    var pairSeg_s = pitchSegAlign_T2S[j].student.split(" ");
+
+				    if (isNaN(pairSeg_s[0])) {break;}
+
+                                    var pairSeg_s_startTime = pitchSeg_s[pairSeg_s[0]].startTime,
+                                        pairSeg_s_endTime = pitchSeg_s[pairSeg_s[pairSeg_s.length-1]].endTime;
+
+				    var idxL = bisectTime(pitchtrackData_s, pairSeg_s_startTime, 1),
+				        idxR = bisectTime(pitchtrackData_s, pairSeg_s_endTime, 1);
+
+				    var currentSeg_s = svg2.append("path")
+					.attr("id", "currentSeg")
+					.attr("d", pitchtrack2(pitchtrackData_s.slice(idxL, idxR)))
 					.attr("stroke", "Cyan")
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
@@ -305,6 +326,7 @@
 			                svg1.select("#info_freq").attr("fill", "transparent");
 			                svg1.select("#info_time").attr("fill", "transparent");
 			                svg1.select("#currentSeg").remove();
+			                svg2.select("#currentSeg").remove();
                                         curSeg = -1;
 		                    })
 		    .on("mousemove", mousemove)
@@ -674,6 +696,8 @@
                     d.time = +d.time;
                     d.pitch = +d.pitch;
                 });
+
+		pitchtrackData_s = data;
             
                 // Scale the range of the data
                 x_s.domain([0, d3.max(data, function(d) { return d.time; })]);
@@ -764,14 +788,33 @@
                                 if (j != curSeg) {
 				    // If seg changes, remove precious one and plot a new one
 				    svg2.select("#currentSeg").remove();
+				    svg1.select("#currentSeg").remove();
 				    curSeg = j;
 
-				    var currentSeg_t = svg2.append("path")
+				    var currentSeg_s = svg2.append("path")
 				    // svg2.append("path")
 					.attr("id", "currentSeg")
 					.attr("d", pitchtrack2(data.filter(function(d) {
 					    return d.time >= pitchSeg_s[j].startTime && d.time <= pitchSeg_s[j].endTime;
 					})))
+					.attr("stroke", "Cyan")
+					.attr("stroke-width", 2)
+					.attr("fill", "none");
+
+				    // Plot aligned segment
+				    var pairSeg_t = pitchSegAlign_S2T[j].teacher.split(" ");
+
+				    if (isNaN(pairSeg_t[0])) {break;}
+
+                                    var pairSeg_t_startTime = pitchSeg_t[pairSeg_t[0]].startTime,
+                                        pairSeg_t_endTime = pitchSeg_t[pairSeg_t[pairSeg_t.length-1]].endTime;
+
+				    var idxL = bisectTime(pitchtrackData_t, pairSeg_t_startTime, 1),
+				        idxR = bisectTime(pitchtrackData_t, pairSeg_t_endTime, 1);
+
+				    var currentSeg_t = svg1.append("path")
+					.attr("id", "currentSeg")
+					.attr("d", pitchtrack1(pitchtrackData_t.slice(idxL, idxR)))
 					.attr("stroke", "Cyan")
 					.attr("stroke-width", 2)
 					.attr("fill", "none");
@@ -816,6 +859,7 @@
 			                svg2.select("#info_freq").attr("fill", "transparent");
 			                svg2.select("#info_time").attr("fill", "transparent");
                                         svg2.select("#currentSeg").remove();
+                                        svg1.select("#currentSeg").remove();
                                         curSeg = -1;
 		                    })
 		    .on("mousemove", mousemove)
@@ -1166,6 +1210,8 @@
                         d.time = +d.time;
                         d.pitch = +d.pitch;
                     });
+
+		    pitchtrackData_t = data;
                     
                     // Rescale the range of the data
                     x_t.domain([0, d3.max(data, function(d) { return d.time; })]);
@@ -1215,6 +1261,7 @@
                                     if (j != curSeg) {
             				// If seg changes, remove precious one and plot a new one
             				svg1.select("#currentSeg").remove();
+					svg2.select("#currentSeg").remove();
             				curSeg = j;
 					
             				var currentSeg_t = svg1.append("path")
@@ -1226,6 +1273,24 @@
             				    .attr("stroke", "Cyan")
             				    .attr("stroke-width", 2)
             				    .attr("fill", "none");
+
+					// Plot aligned segment
+					var pairSeg_s = pitchSegAlign_T2S[j].student.split(" ");
+
+					if (isNaN(pairSeg_s[0])) {break;}
+
+                                        var pairSeg_s_startTime = pitchSeg_s[pairSeg_s[0]].startTime,
+                                            pairSeg_s_endTime = pitchSeg_s[pairSeg_s[pairSeg_s.length-1]].endTime;
+
+					var idxL = bisectTime(pitchtrackData_s, pairSeg_s_startTime, 1),
+				        idxR = bisectTime(pitchtrackData_s, pairSeg_s_endTime, 1);
+
+					var currentSeg_s = svg2.append("path")
+					    .attr("id", "currentSeg")
+					    .attr("d", pitchtrack2(pitchtrackData_s.slice(idxL, idxR)))
+					    .attr("stroke", "Cyan")
+					    .attr("stroke-width", 2)
+					    .attr("fill", "none");
             			    }
 				    
                                     break;
@@ -1244,6 +1309,7 @@
             		    svg1.select("#info_freq").attr("fill", "transparent");
             		    svg1.select("#info_time").attr("fill", "transparent");
             		    svg1.select("#currentSeg").remove();
+            		    svg2.select("#currentSeg").remove();
                             curSeg = -1;
             		})
             		.on("mousemove", mousemove);
@@ -1256,6 +1322,8 @@
 			d.time = +d.time;
 			d.pitch = +d.pitch;
                     });
+
+		    pitchtrackData_s = data;
 		    
                     // Scale the range of the data
                     x_s.domain([0, d3.max(data, function(d) { return d.time; })]);
@@ -1315,6 +1383,7 @@
                                     if (j != curSeg) {
 					// If seg changes, remove precious one and plot a new one
 					svg2.select("#currentSeg").remove();
+					svg1.select("#currentSeg").remove();
 					curSeg = j;
 
 					var currentSeg_t = svg2.append("path")
@@ -1323,6 +1392,24 @@
 					    .attr("d", pitchtrack2(data.filter(function(d) {
 						return d.time >= pitchSeg_s[j].startTime && d.time <= pitchSeg_s[j].endTime;
 					    })))
+					    .attr("stroke", "Cyan")
+					    .attr("stroke-width", 2)
+					    .attr("fill", "none");
+
+					// Plot aligned segment
+					var pairSeg_t = pitchSegAlign_S2T[j].teacher.split(" ");
+
+					if (isNaN(pairSeg_t[0])) {break;}
+
+					var pairSeg_t_startTime = pitchSeg_t[pairSeg_t[0]].startTime,
+                                        pairSeg_t_endTime = pitchSeg_t[pairSeg_t[pairSeg_t.length-1]].endTime;
+
+					var idxL = bisectTime(pitchtrackData_t, pairSeg_t_startTime, 1),
+				        idxR = bisectTime(pitchtrackData_t, pairSeg_t_endTime, 1);
+
+					var currentSeg_t = svg1.append("path")
+					    .attr("id", "currentSeg")
+					    .attr("d", pitchtrack1(pitchtrackData_t.slice(idxL, idxR)))
 					    .attr("stroke", "Cyan")
 					    .attr("stroke-width", 2)
 					    .attr("fill", "none");
@@ -1349,8 +1436,9 @@
 			wavesurfer_s.seekTo(progress);
 		    }
 
-		    svg2.select("#focusArea").on("mousemove", mousemove)
-                                             .on("click", mouseclick);
+		    svg2.select("#focusArea")
+			.on("mousemove", mousemove)
+                        .on("click", mouseclick);
 
 		});
 
