@@ -35,7 +35,7 @@
     <body ng-controller="SJController as sj">
         <!-- Layout -->
         <div id="description" style="position:relative; top:0px; left:0px; margin:0 auto;">
-            <h1>Beijing opera singing intonation analysis and education tool<a href="http://compmusic.upf.edu/" target="_blank"><img src="images/CompMusicLogo.png" alt="CompMusic Logo" style="float:right;width:100px;height:100px;"></a></h1>
+            <h1>Beijing Opera Singing Intonation Analysis and Education Tool<a href="http://compmusic.upf.edu/" target="_blank"><img src="images/CompMusicLogo.png" alt="CompMusic Logo" style="float:right;width:100px;height:100px;"></a></h1>
 	    <p style="font-size:14px"><br>Rong Gong, Yile Yang (rong.gong@upf.edu, yile.yang01@estudiant.upf.edu)</p>
 	    <p style="font-size:14px"><b>Music Technology Group, Universitat Pompeu Fabra, Barcelona</b><br><br></p>
             <h2>Summary</h2>
@@ -62,10 +62,11 @@
         <div id="tips" style="position:relative; top:0px; right:0px; margin:0 right; float:right;width:30%;">
             <h2>Tips:</h2>
 	    <p style="font-size:14px; margin:10px;">
-                1. Click note to play current note.<br>
+                1. Click note to play single note.<br>
                 2. Shift + Click note to play aligned note(s).<br>
                 3. Click plot or audio to navigate playback.<br>
                 4. Click and hold record button to record your own singing.<br>
+                5. If the plot doesn't show correctly, please try to refresh.<br>
             </p>
 	</div>
 
@@ -205,6 +206,8 @@
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
+                    d.freq = +d.freq;
+                    d.noteStr = d.noteStr;
                 });
 
 		pitchtrackData_t = data;
@@ -286,10 +289,10 @@
                     // Show pitch information
                     svg1.select("#info_note")
             		.attr("fill", "grey")
-            		.text("Note: " + d.pitch.toFixed(1));
+            		.text("Note: " + d.pitch.toFixed(1) + '(' + d.noteStr + ')');
                     svg1.select("#info_freq")
             		.attr("fill", "grey")
-            		.text("Freq (Hz): " + d.pitch.toFixed(1));
+            		.text("Freq (Hz): " + d.freq.toFixed(1));
                     svg1.select("#info_time")
             		.attr("fill", "grey")
             		.text("Time (s): " + d.time.toFixed(2));
@@ -751,6 +754,8 @@
                 data.forEach(function(d) {
                     d.time = +d.time;
                     d.pitch = +d.pitch;
+                    d.freq = +d.freq;
+                    d.noteStr = d.noteStr;
                 });
 
 		pitchtrackData_s = data;
@@ -829,10 +834,10 @@
 		    // Show pitch information
 		    svg2.select("#info_note")
 			.attr("fill", "grey")
-			.text("Note: " + d.pitch.toFixed(1));
+			.text("Note: " + d.pitch.toFixed(1) + '(' + d.noteStr + ')');
 		    svg2.select("#info_freq")
 			.attr("fill", "grey")
-			.text("Freq (Hz): " + d.pitch.toFixed(1));
+			.text("Freq (Hz): " + d.freq.toFixed(1));
 		    svg2.select("#info_time")
 			.attr("fill", "grey")
 		        .text("Time (s): " + d.time.toFixed(2));
@@ -1285,6 +1290,8 @@
                     data.forEach(function(d) {
                         d.time = +d.time;
                         d.pitch = +d.pitch;
+                        d.freq = +d.freq;
+                        d.noteStr = d.noteStr;
                     });
 
 		    pitchtrackData_t = data;
@@ -1322,10 +1329,10 @@
                         // Show pitch information
                         svg1.select("#info_note")
                             .attr("fill", "grey")
-                            .text("Note: " + d.pitch.toFixed(1));
+                            .text("Note: " + d.pitch.toFixed(1) + '(' + d.noteStr + ')');
                         svg1.select("#info_freq")
                             .attr("fill", "grey")
-                            .text("Freq (Hz): " + d.pitch.toFixed(2));
+                            .text("Freq (Hz): " + d.freq.toFixed(1));
                         svg1.select("#info_time")
                             .attr("fill", "grey")
                             .text("Time (s): " + d.time.toFixed(2));
@@ -1402,6 +1409,8 @@
                     data.forEach(function(d) {
 			d.time = +d.time;
 			d.pitch = +d.pitch;
+			d.freq = +d.freq;
+			d.noteStr = d.noteStr;
                     });
 
 		    pitchtrackData_s = data;
@@ -1449,10 +1458,10 @@
 			// Show pitch information
 			svg2.select("#info_note")
 			    .attr("fill", "grey")
-			    .text("Note: " + d.pitch.toFixed(1));
+			    .text("Note: " + d.pitch.toFixed(1) + '(' + d.noteStr + ')');
 			svg2.select("#info_freq")
 			    .attr("fill", "grey")
-			    .text("Freq (Hz): " + d.pitch.toFixed(2));
+			    .text("Freq (Hz): " + d.freq.toFixed(1));
 			svg2.select("#info_time")
 			    .attr("fill", "grey")
 		            .text("Time (s): " + d.time.toFixed(2));
@@ -1607,7 +1616,7 @@
 			    // Draw note boundary
 			    var note_t = d.pitch
 			    var freq_t = d.freq
-			    var notestr_t = d.noteStr
+			    var noteStr_t = d.noteStr
 			    var noteStart_t = Number(d3.select(this).attr("x"));
 			    var noteStartTime_t = MIDInote_t[i].startTime;
 			    var noteDuration_t = Number(d3.select(this).attr("width"));
