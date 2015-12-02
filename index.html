@@ -566,10 +566,21 @@
 			                 })
 		         // Play note on click
                          .on("click", function (d, i) {
-			                  var noteStartTime = d.startTime;
-			                  var noteDurationTime = d.duration;
-			                  var noteEndTime = noteStartTime + noteDurationTime;
-			                  wavesurfer_t.play(noteStartTime, noteEndTime);
+                                          // Shift and click to play aligned note(s)
+                                          if (d3.event.shiftKey) {
+                                              var pair_s = dictT2S_note[i].student.split(" ");
+
+					      if (!isNaN(pair_s[0])) {
+						  var noteStartTime = MIDInote_s[pair_s[0]].startTime;
+						  var noteEndTime = Number(MIDInote_s[pair_s[pair_s.length-1]].startTime) + Number(MIDInote_s[pair_s[pair_s.length-1]].duration);
+						  wavesurfer_s.play(noteStartTime, noteEndTime);
+					      }
+                                          } else {
+			                      var noteStartTime = d.startTime;
+			                      var noteDurationTime = d.duration;
+			                      var noteEndTime = noteStartTime + noteDurationTime;
+			                      wavesurfer_t.play(noteStartTime, noteEndTime);
+					  }
 			 });
 
                 }, 100);    // Delay
@@ -1070,10 +1081,21 @@
 			                 })
 		         // Play note on click
                          .on("click", function (d, i) {
-			                  var noteStartTime = d.startTime;
-			                  var noteDurationTime = d.duration;
-			                  var noteEndTime = noteStartTime + noteDurationTime;
-			                  wavesurfer_s.play(noteStartTime, noteEndTime);
+                                          // Shift and click to play aligned note(s)
+                                          if (d3.event.shiftKey) {
+                                              var pair_t = dictS2T_note[i].teacher.split(" ");
+
+					      if (!isNaN(pair_t[0])) {
+						  var noteStartTime = MIDInote_t[pair_t[0]].startTime;
+						  var noteEndTime = Number(MIDInote_t[pair_t[pair_t.length-1]].startTime) + Number(MIDInote_t[pair_t[pair_t.length-1]].duration);
+						  wavesurfer_t.play(noteStartTime, noteEndTime);
+					      }
+                                          } else {
+			                      var noteStartTime = d.startTime;
+			                      var noteDurationTime = d.duration;
+			                      var noteEndTime = noteStartTime + noteDurationTime;
+			                      wavesurfer_s.play(noteStartTime, noteEndTime);
+					  }
 			 });
 
                 }, 100);    // Time delay
@@ -1689,10 +1711,21 @@
 			})
 		    // Play note on click
                         .on("click", function (d, i) {
-			    var noteStartTime = d.startTime;
-			    var noteDurationTime = d.duration;
-			    var noteEndTime = noteStartTime + noteDurationTime;
-			    wavesurfer_t.play(noteStartTime, noteEndTime);
+                            // Shift and click to play aligned note(s)
+                            if (d3.event.shiftKey) {
+                                var pair_s = dictT2S_note[i].student.split(" ");
+
+				if (!isNaN(pair_s[0])) {
+				    var noteStartTime = MIDInote_s[pair_s[0]].startTime;
+				    var noteEndTime = Number(MIDInote_s[pair_s[pair_s.length-1]].startTime) + Number(MIDInote_s[pair_s[pair_s.length-1]].duration);
+				    wavesurfer_s.play(noteStartTime, noteEndTime);
+				}
+                            } else {
+			        var noteStartTime = d.startTime;
+			        var noteDurationTime = d.duration;
+			        var noteEndTime = noteStartTime + noteDurationTime;
+			        wavesurfer_t.play(noteStartTime, noteEndTime);
+			    }
 			});
 		});
 
@@ -1880,10 +1913,21 @@
 			})
 		    // Play note on click
                         .on("click", function (d, i) {
-			    var noteStartTime = d.startTime;
-			    var noteDurationTime = d.duration;
-			    var noteEndTime = noteStartTime + noteDurationTime;
-			    wavesurfer_s.play(noteStartTime, noteEndTime);
+                            // Shift and click to play aligned note(s)
+                            if (d3.event.shiftKey) {
+                                var pair_t = dictS2T_note[i].teacher.split(" ");
+
+				if (!isNaN(pair_t[0])) {
+				    var noteStartTime = MIDInote_t[pair_t[0]].startTime;
+				    var noteEndTime = Number(MIDInote_t[pair_t[pair_t.length-1]].startTime) + Number(MIDInote_t[pair_t[pair_t.length-1]].duration);
+				    wavesurfer_t.play(noteStartTime, noteEndTime);
+				}
+                            } else {
+			        var noteStartTime = d.startTime;
+			        var noteDurationTime = d.duration;
+			        var noteEndTime = noteStartTime + noteDurationTime;
+			        wavesurfer_s.play(noteStartTime, noteEndTime);
+			    }
 			});
 		});
 
