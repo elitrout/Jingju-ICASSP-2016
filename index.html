@@ -21,26 +21,8 @@
         }
     </style>
 
-    <div id="area1" style="position:relative; top:0px; left:0px; margin:0 auto;"></div>
-    <div id="control1" style="position:relative; top:35px; left:0px; margin:0 auto;">
-        <button id="playButton_t" onclick="playButton_t_onclick()" style="text-align: middle;">Play</button>
-    </div>
-    <div id="wave1" style="position:relative; margin:0 left; top:10px; height:30px; border:1px solid lightgrey;"></div>
-    <div id="area2" style="position:relative; top:20px; left:0px; margin:0 auto;"></div>
-    <div id="control2" style="position:relative; top:55px; left:0px; margin:0 auto;">
-        <button id="playButton_s" onclick="playButton_s_onclick()">Play</button>
-    </div>
-    <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:1px solid lightgrey;"></div>
-    <div ng-controller="RecordController as rec" id="control3" style="position:relative; top:55px; left:0px; margin:0 auto;">
-    <!-- <button id="recordButton" ng-mousedown="rec.startRecording()" ng-mouseup="rec.stopRecording()" ng-class="{'btn-danger': rec.isRecording(), btn: true}"> -->
-    <button id="recordButton" onclick="updateData()">
-    <b>Click and hold to record!</b>
-    </button>
-    <b><span id="recordingInfo" style="font-size:14px"> Ready to record.</span></b>
-    </div>
-
     <head>
-        <title>Demo</title>
+        <title>Jingju Education Demo</title>
         <script type="text/javascript" src="thirdparty/d3/d3.js" charset="utf-8"></script>
         <script type="text/javascript" src="thirdparty/wavesurfer.min.js"></script>
 	<script type="text/javascript" src="thirdparty/angular.min.js"></script>
@@ -51,6 +33,68 @@
     </head>
 
     <body ng-controller="SJController as sj">
+        <!-- Layout -->
+        <div id="description" style="position:relative; top:0px; left:0px; margin:0 auto;">
+            <h1>Beijing opera singing intonation analysis and education tool<a href="http://compmusic.upf.edu/" target="_blank"><img src="images/CompMusicLogo.png" alt="CompMusic Logo" style="float:right;width:100px;height:100px;"></a></h1>
+	    <p style="font-size:14px"><br>Rong Gong, Yile Yang (rong.gong@upf.edu, yile.yang01@estudiant.upf.edu)</p>
+	    <p style="font-size:14px"><b>Music Technology Group, Universitat Pompeu Fabra, Barcelona</b><br><br></p>
+            <h2>Summary</h2>
+	    <p style="font-size:14px; margin:10px;">This is the demonstration of a singing intonation analysis and education tool specially developed for phrase-level Beijing opera singing training. It lies within the topic “Audio and acoustic signal processing”. The functionality of this tool is to analyse the singing intonation of the student and reveal interactively his/her intonation problem on both note level and F0 contour’s segment level by comparing with his/her teacher. The technologies used in this tool contain F0 extraction, note transcription, F0 contour segmentation and note/segment alignment. F0 contour segmentation developed in Beijing opera context enables us to analyse the subtle details of the intonation. The note/segment alignment facilitate the student to check the corresponding notes or segments and then find the intonation problem by comparing with his/her teacher. The dynamic web page implementation of this tool offers great potential for self-learning and MOOC application.</p>
+	    <br>
+            <h2>Algorithm</h2>
+	    <p style="font-size:14px; margin:10px;">From the audio recording of the call, the algorithm extracts the F0 pitch contour and transcribes it into notes. The F0 pitch contour is then segmented into ascending, descending, flat and vibrato parts for the purpose of being checked in detail. The notes and segments are finally aligned between teacher and student.</p>
+	    <br>
+            <h2>Instructions</h2>
+	    <p style="font-size:14px; margin:10px;">
+                1. Works best on Google Chrome and Firefox. When the page asks for microphone permissions, select "Allow" on Chrome and "Always share" on Firefox, and then reload the page again.<br>
+                2. Click “play” button on the left side of teacher’s audio waveform to listen to the standard singing.<br>
+                3. Click and hold down the record button then sing the same phrase as the teacher.<br>
+                4. Release the record button and wait for the response. The analysed F0 contour and notes will appear on the student section.<br>
+                5. Hover over the mouse pointer on student’s notes or segments to check the teacher’s correspondents or vice versa.<br>
+                6. The note pitch and length information enable us to find the singing problems.<br><br>
+		Demo video: <a href="https://youtu.be/GVyDG9Oqf_Q">https://youtu.be/GVyDG9Oqf_Q</a>
+            </p>
+	    <br>
+            <h2>Time for some Beijing opera!</h2>
+	    <br>
+        </div>
+
+        <div id="tips" style="position:relative; top:0px; right:0px; margin:0 right; float:right;width:30%;">
+            <h2>Tips:</h2>
+	    <p style="font-size:14px; margin:10px;">
+                1. Click note to play current note.<br>
+                2. Shift + Click note to play aligned note(s).<br>
+                3. Click plot or audio to navigate playback.<br>
+                4. Click and hold record button to record your own singing.<br>
+            </p>
+	</div>
+
+	<div id="area1" style="position:relative; top:0px; left:0px; margin:0 auto;"></div>
+	<div id="control1" style="position:relative; top:35px; left:0px; margin:0 auto;">
+            <button id="playButton_t" onclick="playButton_t_onclick()" style="text-align: middle;">Play</button>
+	</div>
+	<div id="wave1" style="position:relative; margin:0 left; top:10px; height:30px; border:1px solid lightgrey;"></div>
+
+        <div id="area2" style="position:relative; top:20px; left:0px; margin:0 auto;"></div>
+
+        <div id="additionalInfo" style="position:relative; bottom:0px; right:0px; margin:0 right; float:right;width:30%;">
+            <h3>Source Code:</h3>
+            <a href="https://github.com/MTG/jingju-icassp-2016" target="_blank" style="font-size:14px;">https://github.com/MTG/jingju-icassp-2016</a>
+	</div>
+
+        <div id="control2" style="position:relative; top:55px; left:0px; margin:0 auto;">
+            <button id="playButton_s" onclick="playButton_s_onclick()" style="text-align: middle;">Play</button>
+        </div>
+        <div id="wave2" style="position:relative; margin:0 left; top:30px; height:30px; border:1px solid lightgrey;"></div>
+        <div ng-controller="RecordController as rec" id="control3" style="position:relative; top:55px; left:0px; margin:0 auto;">
+        <!-- <button id="recordButton" ng-mousedown="rec.startRecording()" ng-mouseup="rec.stopRecording()" ng-class="{'btn-danger': rec.isRecording(), btn: true}"> -->
+            <button id="recordButton" onclick="updateData()">
+                <b>Click and hold to record!</b>
+            </button>
+            <b><span id="recordingInfo" style="font-size:14px"> Ready to record.</span></b>
+        </div>
+
+        <!-- Game on! -->
         <script type="text/javascript">
 
             // Set the dimensions of the canvas / graph
