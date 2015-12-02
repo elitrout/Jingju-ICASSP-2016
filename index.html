@@ -1592,6 +1592,9 @@
 
 		    // Update with new data
 		    MIDInote_t = data;
+
+		    // Sometimes plot doesn't show. Delay seems to be a workaround.
+		    setTimeout(function() {
 		    
 		    // Plot new notes
 	    	    var MIDInotes = svg1.selectAll("rect.note")    // Have to specify a class to exclude focus area
@@ -1726,7 +1729,7 @@
                             svg2.select("#info_time")
                                 .attr("fill", "grey")
                                 .text("Time (s): " + groupTimeBoundaryL + ' - ' + groupTimeBoundaryR + ' (' + groupTimeDuration + ')');
-			    }
+                            }
 			})
 		        .on("mouseout", function(d, i) {
 			    // Show focus line
@@ -1781,6 +1784,7 @@
 			        wavesurfer_t.play(noteStartTime, noteEndTime);
 			    }
 			});
+			}, 100);
 		});
 
 		// Update student MIDI note plot
@@ -1802,6 +1806,9 @@
 		    // Update with new data
 		    MIDInote_s = data;
 		    
+		    // Sometimes plot doesn't show. Delay seems to be a workaround.
+		    setTimeout(function() {
+
 		    // Plot new notes
 	    	    var MIDInotes = svg2.selectAll("rect.note")
                         .data(data)
@@ -1983,6 +1990,7 @@
 			        wavesurfer_s.play(noteStartTime, noteEndTime);
 			    }
 			});
+		}, 100);
 		});
 
 		// });
