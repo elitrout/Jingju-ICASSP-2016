@@ -81,6 +81,8 @@
 		  // stop Recorder.js
 		  rec.stop();                
 
+		    document.getElementById("recordingInfo").innerHTML = "Computing...  <img src=\"images/computing.gif\" alt=\"Computing... \" style=\"width:50px;height:14px;\">";
+
 		  // export it to WAV
 		  rec.exportWAV(function(e){
 		    rec.clear();
@@ -120,6 +122,8 @@
 			console.log("Recording ....");
 			this.recording = true;
 			//$("#recordingInfo").html("Waiting for next sam (downbeat) to start recording...");
+                        document.getElementById("recordingInfo").innerHTML = "Recording...  <img src=\"images/recording.gif\" alt=\"Recording... \" style=\"width:50px;height:14px;\">";
+
 			$timeout(record, 0);
 		};
 
