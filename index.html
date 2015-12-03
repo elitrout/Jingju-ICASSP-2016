@@ -235,6 +235,7 @@
 
                 // Add the pitchtrack path.
                 svg1.append("path")
+		    .attr("id", "path_t")
                     .attr("class", "line")
                     .attr("d", pitchtrack1(data))
                     .attr("stroke", "PaleVioletRed")
@@ -1314,7 +1315,18 @@
                     // Rescale the range of the data
                     x_t.domain([0, d3.max(data, function(d) { return d.time; })]);
                     y_t.domain([d3.min(data, function(d) { if (d.pitch>0) {return d.pitch;}}), 2 + d3.max(data, function(d) { return d.pitch; })]);
-            
+
+                    // Update X Axis
+                    svg1.select(".x.axis")
+			.call(xAxis_t);
+		    
+                    // Update Y Axis
+                    svg1.select(".y.axis")
+			.call(yAxis_t);
+
+		    // Update pitch
+		    svg1.select("#path_t").attr("d", pitchtrack1(data));
+
             	    // Functions for mouse events
             	    var bisectTime = d3.bisector(function(d) { return d.time; }).left;
 		    
@@ -1553,7 +1565,41 @@
 		});
 
 		// Update audio
-		// wavesurfer_s.load('data/weiguojia_section_pro.wav');
+		wavesurfer_t.load(audio_t_update);
+
+		wavesurfer_t.unAll();
+
+		wavesurfer_t.on('audioprocess', function () {
+		    currentTime = wavesurfer_t.getCurrentTime();
+		    d3.select("#playbackPointer_t")
+			.attr("x1", x_t(currentTime))
+			.attr("y1", height)
+			.attr("x2", x_t(currentTime))
+			.attr("y2", 0)
+			.style("stroke", "black");
+		});
+
+		wavesurfer_t.on('finish', function () {
+		    d3.select("#playbackPointer_t")
+			.attr("x1", x_t(0))
+			.attr("y1", height)
+			.attr("x2", x_t(0))
+			.attr("y2", 0)
+			.style("stroke", "black");
+
+		    document.getElementById("playButton_t").innerHTML = "Play";
+		});
+
+		wavesurfer_t.on('seek', function () {
+		    currentTime = wavesurfer_t.getCurrentTime();
+		    d3.select("#playbackPointer_t")
+			.attr("x1", x_t(currentTime))
+			.attr("y1", height)
+			.attr("x2", x_t(currentTime))
+			.attr("y2", 0)
+			.style("stroke", "black");
+		});
+
 		wavesurfer_s.load(audio_s_update);
 
 		wavesurfer_s.unAll();
