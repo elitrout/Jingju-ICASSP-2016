@@ -59,7 +59,22 @@
 	    <br>
         </div>
 
-        <div id="tips" style="position:relative; top:0px; right:0px; margin:0 right; float:right;width:30%;">
+        <div style="position:relative; top:0px; right:0px; margin:0 right; float:right;width:30%;">
+	    <br><br>
+            <h2>Please Choose a Phrase:</h2>
+	    <p style="font-size:12px;">
+	        (Phrase names are actual lyrics)
+            </p>
+	    <select onchange="updatePhrase(this.value);">
+	      <option value="01" selected>1. 为国家哪何曾</option>
+	      <option value="02">2. 半日闲空</option>
+	      <option value="03">3. 我也曾征过了塞北西东</option>
+	      <option value="04">4. 官封我节度使</option>
+	      <option value="05">5. 皇王恩重</option>
+	      <option value="06">6. 霎时间身不爽瞌睡</option>
+	      <option value="07">7. 朦胧</option>
+	    </select>
+	    <br><br><br><br>
             <h2>Tips:</h2>
 	    <p style="font-size:14px; margin:10px;">
                 1. Click note to play single note.<br>
@@ -70,7 +85,7 @@
             </p>
 	</div>
 
-	<div id="area1" style="position:relative; top:0px; left:0px; margin:0 auto;"></div>
+	<div id="area1" style="position:relative; top:0px; left:0px; margin:0 left; width:70%;"></div>
 	<div id="control1" style="position:relative; top:35px; left:0px; margin:0 auto;">
             <button id="playButton_t" onclick="playButton_t_onclick()" style="text-align: middle;">Play</button>
 	</div>
@@ -1222,7 +1237,7 @@
 ///////////////////////////////////////////////////
 ///// Update visualization with new data
 ///////////////////////////////////////////////////
-            function updateData () {
+            function updateData (pitchtrack_t_update, pitchtrack_s_update, noteSeg_t_update, noteSeg_s_update, noteAlign_T2S_update, noteAlign_S2T_update, audio_t_update, audio_s_update, pitchSeg_t_update, pitchSeg_s_update, pitchSegAlign_T2S_update, pitchSegAlign_S2T_update) {
 		// Update alignment dict
 		var dictS2T_note;
 		// d3.tsv("data/amateur2pro.txt", function(error, data) {
@@ -2002,6 +2017,30 @@
             	this.parentNode.appendChild(this);
                 });
             };
+
+///////////////////////////////////////////////////
+///// Update plot when new phrase is selected
+///////////////////////////////////////////////////
+            function updatePhrase (phraseNum) {
+		console.log(phraseNum);
+
+		// Update data file path
+		pitchtrack_t_default = "data/exampleFiles/" + phraseNum + "/teacher_regression_pitchtrack.csv";
+		pitchtrack_s_default = "data/exampleFiles/" + phraseNum + "/student_regression_pitchtrack.csv";
+		noteSeg_t_default = "data/exampleFiles/" + phraseNum + "/teacher_monoNoteOut_midi.csv";
+		noteSeg_s_default = "data/exampleFiles/" + phraseNum + "/student_monoNoteOut_midi.csv";
+		noteAlign_T2S_default = "data/exampleFiles/" + phraseNum + "/teacher_noteAligned.csv";
+		noteAlign_S2T_default = "data/exampleFiles/" + phraseNum + "/student_noteAligned.csv";
+		audio_t_default = "data/exampleFiles/" + phraseNum + "/teacher.mp3";
+		audio_s_default = "data/exampleFiles/" + phraseNum + "/student.mp3";
+		pitchSeg_t_default = "data/exampleFiles/" + phraseNum + "/teacher_refinedSeg.csv";
+		pitchSeg_s_default = "data/exampleFiles/" + phraseNum + "/student_refinedSeg.csv";
+		pitchSegAlign_T2S_default = "data/exampleFiles/" + phraseNum + "/teacher_segAligned.csv";
+		pitchSegAlign_S2T_default = "data/exampleFiles/" + phraseNum + "/student_segAligned.csv";
+
+		// Update plot with new phrase
+		updateData (pitchtrack_t_default, pitchtrack_s_default, noteSeg_t_default, noteSeg_s_default, noteAlign_T2S_default, noteAlign_S2T_default, audio_t_default, audio_s_default, pitchSeg_t_default, pitchSeg_s_default, pitchSegAlign_T2S_default, pitchSegAlign_S2T_default);
+	    }
 
         </script>
     </body>
