@@ -24,3 +24,5 @@ var pitchSeg_t_update = pitchSeg_t_default;
 var pitchSeg_s_update = "data/updateFiles/student_refinedSeg.csv";
 var pitchSegAlign_T2S_update = "data/updateFiles/teacher_segAligned.csv";
 var pitchSegAlign_S2T_update = "data/updateFiles/student_segAligned.csv";
+
+var phraseNumber = "01";
