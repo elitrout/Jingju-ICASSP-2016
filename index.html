@@ -687,6 +687,8 @@
 		    .attr("x2", x_t(currentTime))
 		    .attr("y2", 0)
 		    .style("stroke", "black");
+
+		document.getElementById("playButton_t").innerHTML = "Pause";
             });
 
             wavesurfer_t.on('finish', function () {
@@ -708,6 +710,10 @@
 		    .attr("x2", x_t(currentTime))
 		    .attr("y2", 0)
 		    .style("stroke", "black");
+            });
+
+            wavesurfer_t.on('pause', function () {
+		document.getElementById("playButton_t").innerHTML = "Play";
             });
 
             function playButton_t_onclick () {
@@ -1203,6 +1209,8 @@
 		    .attr("x2", x_s(currentTime))
 		    .attr("y2", 0)
 		    .style("stroke", "black");
+
+		document.getElementById("playButton_s").innerHTML = "Pause";
             });
 
             wavesurfer_s.on('finish', function () {
@@ -1224,6 +1232,10 @@
 		    .attr("x2", x_s(currentTime))
 		    .attr("y2", 0)
 		    .style("stroke", "black");
+            });
+
+            wavesurfer_s.on('pause', function () {
+		document.getElementById("playButton_s").innerHTML = "Play";
             });
 
             function playButton_s_onclick () {
@@ -1577,6 +1589,8 @@
 			.attr("x2", x_t(currentTime))
 			.attr("y2", 0)
 			.style("stroke", "black");
+
+		    document.getElementById("playButton_t").innerHTML = "Pause";
 		});
 
 		wavesurfer_t.on('finish', function () {
@@ -1600,6 +1614,10 @@
 			.style("stroke", "black");
 		});
 
+		wavesurfer_t.on('pause', function () {
+		    document.getElementById("playButton_t").innerHTML = "Play";
+		});
+
 		wavesurfer_s.load(audio_s_update);
 
 		wavesurfer_s.unAll();
@@ -1612,6 +1630,8 @@
 			.attr("x2", x_s(currentTime))
 			.attr("y2", 0)
 			.style("stroke", "black");
+
+		    document.getElementById("playButton_s").innerHTML = "Pause";
 		});
 
 		wavesurfer_s.on('finish', function () {
@@ -1633,6 +1653,10 @@
 			.attr("x2", x_s(currentTime))
 			.attr("y2", 0)
 			.style("stroke", "black");
+		});
+
+		wavesurfer_s.on('pause', function () {
+		    document.getElementById("playButton_s").innerHTML = "Play";
 		});
 
 		// Update teacher MIDI note plot
@@ -2066,8 +2090,6 @@
 ///// Update plot when new phrase is selected
 ///////////////////////////////////////////////////
             function updatePhrase (phraseNum) {
-		console.log(phraseNum);
-
 		// Update data file path
 		pitchtrack_t_default = "data/exampleFiles/" + phraseNum + "/teacher_regression_pitchtrack.csv";
 		pitchtrack_s_default = "data/exampleFiles/" + phraseNum + "/student_regression_pitchtrack.csv";
