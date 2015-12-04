@@ -2090,6 +2090,9 @@
 ///// Update plot when new phrase is selected
 ///////////////////////////////////////////////////
             function updatePhrase (phraseNum) {
+		// Update selected phrase
+		phraseNumber = phraseNum;
+
 		// Update data file path
 		pitchtrack_t_default = "data/exampleFiles/" + phraseNum + "/teacher_regression_pitchtrack.csv";
 		pitchtrack_s_default = "data/exampleFiles/" + phraseNum + "/student_regression_pitchtrack.csv";
