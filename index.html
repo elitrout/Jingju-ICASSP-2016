@@ -1636,7 +1636,6 @@
 		});
 
 		// Update teacher MIDI note plot
-		// d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
 		d3.csv(noteSeg_t_update, function(error, data) {
                     data.forEach(function(d) {
 			d.startTime = +d.startTime;
@@ -1678,9 +1677,9 @@
 			    // Highlight current note
 			    d3.select(this).attr("fill", "Purple");
 			    // Draw note boundary
-			    var note_t = d.pitch
-			    var freq_t = d.freq
-			    var noteStr_t = d.noteStr
+			    var note_t = d.pitch;
+			    var freq_t = d.freq;
+			    var noteStr_t = d.noteStr;
 			    var noteStart_t = Number(d3.select(this).attr("x"));
 			    var noteStartTime_t = MIDInote_t[i].startTime;
 			    var noteDuration_t = Number(d3.select(this).attr("width"));
@@ -1708,7 +1707,7 @@
 			    // Print note information
 			    svg1.select("#info_note")
                                 .attr("fill", "grey")
-				.text("Note: " + note_t.toFixed(1)) + '(' + noteStr_t + ')';
+				.text("Note: " + note_t.toFixed(1) + '(' + noteStr_t + ')');
 			    svg1.select("#info_freq")
 			        .attr("fill", "grey")
 				.text("Freq (Hz): " + freq_t.toFixed(1));
@@ -1765,7 +1764,7 @@
 				freqInfoText = freq_s.toFixed(1);
 				groupTimeBoundaryL = noteStartTime_s.toFixed(2);
 				groupTimeDuration = noteDurationTime_s.toFixed(2);
-				groupTimeBoundaryR = groupTimeBoundaryL + groupTimeDuration;
+				groupTimeBoundaryR = Number(groupTimeBoundaryL) + Number(groupTimeDuration);
 			    } else {  // More than 1 note
 				if (n == 0) {
 				    noteInfoText = note_s.toFixed(1) + '(' + noteStr_s + ')';
@@ -1849,7 +1848,6 @@
 		});
 
 		// Update student MIDI note plot
-		// d3.tsv("data/pitchtracknotetranscriptionsegmentation/weiguojia_section_pro_monoNoteOut_midi.txt", function(error, data) {
 		d3.csv(noteSeg_s_update, function(error, data) {
                     data.forEach(function(d) {
 			d.startTime = +d.startTime;
@@ -1923,7 +1921,7 @@
 			    // Print note information
 			    svg2.select("#info_note")
                                 .attr("fill", "grey")
-				.text("Note: " + note_s.toFixed(1)) + '(' + noteStr_s + ')';
+				.text("Note: " + note_s.toFixed(1) + '(' + noteStr_s + ')');
 			    svg2.select("#info_freq")
 			        .attr("fill", "grey")
 				.text("Freq (Hz): " + freq_s.toFixed(1));
@@ -1981,7 +1979,7 @@
 				    freqInfoText = freq_t.toFixed(1);
 				    groupTimeBoundaryL = noteStartTime_t.toFixed(2);
 				    groupTimeDuration = noteDurationTime_t.toFixed(2);
-				    groupTimeBoundaryR = groupTimeBoundaryL + groupTimeDuration;
+				    groupTimeBoundaryR = Number(groupTimeBoundaryL) + Number(groupTimeDuration);
 				} else {  // More than 1 note
 				    if (n == 0) {
 					noteInfoText = note_t.toFixed(1) + '(' + noteStr_t + ')';
