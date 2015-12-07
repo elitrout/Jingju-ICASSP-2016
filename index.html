@@ -39,19 +39,23 @@
 	    <p style="font-size:14px"><br>Rong Gong, Yile Yang (rong.gong@upf.edu, yile.yang01@estudiant.upf.edu)</p>
 	    <p style="font-size:14px"><b>Music Technology Group, Universitat Pompeu Fabra, Barcelona</b><br><br></p>
             <h2>Summary</h2>
-	    <p style="font-size:14px; margin:10px;">This is the demonstration of a singing intonation analysis and education tool specially developed for phrase-level Beijing opera singing training. It lies within the topic “Audio and acoustic signal processing”. The functionality of this tool is to analyse the singing intonation of the student and reveal interactively his/her intonation problem on both note level and F0 contour’s segment level by comparing with his/her teacher. The technologies used in this tool contain F0 extraction, note transcription, F0 contour segmentation and note/segment alignment. F0 contour segmentation developed in Beijing opera context enables us to analyse the subtle details of the intonation. The note/segment alignment facilitate the student to check the corresponding notes or segments and then find the intonation problem by comparing with his/her teacher. The dynamic web page implementation of this tool offers great potential for self-learning and MOOC application.</p>
+	    <p style="font-size:14px; margin:10px;">This is the demonstration of a singing intonation analysis and education tool specially developed for phrase-level Beijing opera singing training. It lies within the domain “Audio and acoustic signal processing”. The functionality of this tool is to analyse the singing intonation of the student and reveal interactively his/her intonation problem on both note level and F0 contour’s segment level by the comparison with the teacher. The technologies used in this tool contain F0 extraction, note transcription, F0 contour segmentation and note/segment alignment. F0 contour segmentation developed in Beijing opera context enables us to analyse the subtle details of the intonation. The note/segment alignment facilitate the student to check the corresponding notes or segments and then find the intonation problem on a finer level. The web page implementation of this tool offers great potential for self-learning and MOOC application.</p>
+	    <br>
+            <h2>Beijing opera singing training</h2>
+	    <p style="font-size:14px; margin:10px;">In professional Beijing opera singing training, the teacher has absolute authority. The teacher's singing is seen as the standard to which the student's imitation should be as close as possible. The training process is on phrase-level. The teacher sings firstly one short phrase (opening or closing couplet) which is usually less than 8 syllables, then the student imitates this phrase. Finally, the teacher will give comments or suggestions from the perspectives of intonation, rhythm, timbre, loudness and phonation. This training process is shown in the example video below.</p>
 	    <br>
             <h2>Algorithm</h2>
-	    <p style="font-size:14px; margin:10px;">From the audio recording of the call, the algorithm extracts the F0 pitch contour and transcribes it into notes. The F0 pitch contour is then segmented into ascending, descending, flat and vibrato parts for the purpose of being checked in detail. The notes and segments are finally aligned between teacher and student.</p>
+	    <p style="font-size:14px; margin:10px;">From the audio recording, the algorithm extracts the F0 pitch contour and transcribes it into notes. The F0 pitch contour is then segmented into ascending, descending, flat and vibrato parts for the purpose of finer analysis. The notes and segments are finally aligned between teacher and student.</p>
 	    <br>
             <h2>Instructions</h2>
 	    <p style="font-size:14px; margin:10px;">
-                1. Works best on Google Chrome and Firefox. When the page asks for microphone permissions, select "Allow" on Chrome and "Always share" on Firefox, and then reload the page again.<br>
-                2. Click “play” button on the left side of teacher’s audio waveform to listen to the standard singing.<br>
-                3. Click and hold down the record button then sing the same phrase as the teacher.<br>
-                4. Release the record button and wait for the response. The analysed F0 contour and notes will appear on the student section.<br>
-                5. Hover over the mouse pointer on student’s notes or segments to check the teacher’s correspondents or vice versa.<br>
-                6. The note pitch and length information enable us to find the singing problems.<br><br>
+	        (Note: This tool currently works best on the latest versions of Chrome and Firefox.)<br><br>
+                1. The tool contains mainly two graphs, one of the teacher, which is the imitation target, and the other of the student, which reflects the student’s singing. By comparing the two graphs, the tool provides useful analysis to help the students to find the difference and improve with practice. Each graph mainly consists of a pitch track (F0 contour) of the singing melody, and MIDI notes derived from the pitch track.<br>
+                2. Hover over the mouse on the graph to highlight current pitch track segment, and the aligned one on the other graph.<br>
+                3. Hover over the mouse on the MIDI note to highlight current note, and the aligned one(s) on the other graph. Click the note to play single note. Shift + Click the note to play aligned note(s).<br>
+                4. Click and hold down the record button to record your own singing. Release the record button when finish, and the student graph will be updated with the analysis of your own singing. (When the page asks for microphone permissions, select "Allow" on Chrome and "Always share" on Firefox, and then reload the page again.)<br>
+                5. There are several training phrases to choose from. Each phrase has a default student example.<br><br>
+
 		Demo video: <a href="https://youtu.be/GVyDG9Oqf_Q">https://youtu.be/GVyDG9Oqf_Q</a>
             </p>
 	    <br>
